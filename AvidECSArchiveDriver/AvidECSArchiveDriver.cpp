@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "CommonDef.h"
-#include "ECSConnection.h"
+//#include "ECSConnection.h"
 #include "AvidECSArchiveDriver.h"
 
 #ifdef _DEBUG
@@ -28,7 +28,7 @@ CAvidECSArchiveDriverApp::CAvidECSArchiveDriverApp()
 	FILE_LOG(logDEBUG) << "About to init ECS";
 
 	//Open ECS Connector
-	CECSConnection::Init();
+	//CECSConnection::Init();
 
 	FILE_LOG(logDEBUG) << "ECS Init Complete";
 }

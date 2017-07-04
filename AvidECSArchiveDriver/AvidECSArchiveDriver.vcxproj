@@ -272,6 +272,7 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="AvidECSArchiveDriver.def" />
+    <None Include="DETVendor.reg" />
     <None Include="res\AvidECSArchiveDriver.rc2" />
   </ItemGroup>
   <ItemGroup>
