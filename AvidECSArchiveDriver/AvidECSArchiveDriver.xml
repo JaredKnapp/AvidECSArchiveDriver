@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DET version="2.0">
+	<DETVendorParams version="2.0">
+		<Vendor>Dell EMC</Vendor>
+		<DLLVersion>1.0</DLLVersion>
+		<MaxSessions>100</MaxSessions>
+		<BlockMoveSize>20000</BlockMoveSize>
+		<PrivateData>
+			<TransferOptions>
+				<Overwrite>Yes</Overwrite>
+				<Duplicate>No</Duplicate>
+				<Destroy>No</Destroy>
+				<BlockMove>Yes</BlockMove>
+				<IterateOnMob>No</IterateOnMob>
+			</TransferOptions>
+			<StoragePath>C:\DET2\DETDestination\Media</StoragePath>
+			<ObjectStorage>
+				<url>http://10.246.27.201:9024</url>
+				<user>avid</user>
+				<secret>/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd</secret>
+				<bucket>avid-bucket</bucket>
+			</ObjectStorage>
+		</PrivateData>
+	</DETVendorParams>
+</DET>
