@@ -15,10 +15,10 @@
 			</TransferOptions>
 			<StoragePath>C:\DET2\DETDestination\Media</StoragePath>
 			<ObjectStorage>
-				<url>http://10.246.27.201:9024</url>
-				<user>avid</user>
-				<secret>/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd</secret>
-				<bucket>avid-bucket</bucket>
+				<Url>http://10.246.27.201:9024</Url>
+				<User>avid</User>
+				<Secret>/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd</Secret>
+				<Bucket>avid-bucket</Bucket>
 			</ObjectStorage>
 		</PrivateData>
 	</DETVendorParams>

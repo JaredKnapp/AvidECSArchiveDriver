@@ -1,10 +1,16 @@
 #include "stdafx.h"
 
+#include "ECSConnection.h"
+
 #include "Messages.h"
 #include "DETState.h"
+#include "XMLDOMParser.h"
 #include "DETAction.h"
 
+
 CriticalSection DETAction::m_CriticalSection;
+bool m_bShuttingDown = false;
+
 
 DETAction::DETAction() :
 	m_pState(NULL),
@@ -62,8 +68,8 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 		//the Push
 		if (StateSet = m_pState->SetState(vrskrsRun))
 		{
-//			DETXMLDomParser p(m_Data, DETXML);
-
+			XMLDomParser xmlParser(m_Data, lpXML);
+			xmlParser.parse();
 		}
 	}
 	catch (...)
@@ -76,9 +82,19 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 	return Error;
 }
 
-Av::DETEx::eError DETAction::GetDETError(char * lpBuffer, unsigned long * nSize)
+Av::DETEx::eError DETAction::GetError(char * lpBuffer, unsigned long * nSize)
 {
-	return Av::DETEx::eError();
+	if (lpBuffer == NULL || *nSize <= m_sLastError.GetLength() + 1)
+	{
+		*nSize = (unsigned long)m_sLastError.GetLength() + 1;
+		return Av::DETEx::keBufferTooSmall;
+	}
+	else
+	{
+		USES_CONVERSION;
+		strcpy(lpBuffer, T2A((LPCTSTR)m_sLastError));
+		return Av::DETEx::keNoError;
+	}
 }
 
 Av::DETEx::eError DETAction::GetResult(char * lpBuffer, unsigned long * nSize)

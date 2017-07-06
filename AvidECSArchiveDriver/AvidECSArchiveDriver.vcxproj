@@ -97,16 +97,17 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)$(Configuration)\$(Platform)\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\AvidECSArchiveDriver.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>ECSUtil.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ECSUtil.lib;xerces-c_3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform);$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -131,16 +132,17 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)$(Configuration)\$(Platform)\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\AvidECSArchiveDriver.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>ECSUtil.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ECSUtil.lib;xerces-c_3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform);$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -167,9 +169,10 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)$(Configuration)\$(Platform)\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -177,8 +180,8 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>.\AvidECSArchiveDriver.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>ECSUtil.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ECSUtil.lib;xerces-c_3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform);$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -205,9 +208,10 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)$(Configuration)\$(Platform)\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -215,8 +219,8 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>.\AvidECSArchiveDriver.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>ECSUtil.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ECSUtil.lib;xerces-c_3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform);$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -253,6 +257,7 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="XMLDomParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvidECSArchiveDriver.h" />
@@ -269,6 +274,7 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="XMLDomParser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AvidECSArchiveDriver.def" />
@@ -283,6 +289,5 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

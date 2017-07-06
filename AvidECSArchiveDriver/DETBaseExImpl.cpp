@@ -3,6 +3,8 @@
 
 #include "Messages.h"
 #include "DETActionFactory.h"
+#include "XMLDomParser.h"
+
 #include "DETBaseExImpl.h"
 
 /****************************
@@ -29,10 +31,12 @@ DETEXPORT Av::DETEx::DETBaseEx *DETBaseExCreate()
 *****************************/
 DETBaseExImpl::DETBaseExImpl() : Av::DETEx::DETBaseEx(), m_pDETAction(NULL)
 {
+	XMLDomParser::Initialize();
 }
 
 DETBaseExImpl::~DETBaseExImpl()
 {
+	XMLDomParser::Terminate();
 }
 
 Av::DETEx::eError DETBaseExImpl::VersionEx(long * pwVersion)
@@ -57,7 +61,12 @@ Av::DETEx::eError DETBaseExImpl::OpenEx(Av::DETEx::ActionType type)
 Av::DETEx::eError DETBaseExImpl::ActionEx(const char * lpXML)
 {
 	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::ActionEx(" << lpXML << ")";
-	return Av::DETEx::keUnimplemented;
+	if (m_pDETAction != NULL)
+	{
+		return m_pDETAction->Action(lpXML);
+	}
+	else
+		return Av::DETEx::keNoTransaction;
 }
 
 Av::DETEx::eError DETBaseExImpl::CloseEx()
@@ -75,14 +84,24 @@ Av::DETEx::eError DETBaseExImpl::CloseEx()
 
 Av::DETEx::eError DETBaseExImpl::GetResultEx(char * lpBuffer, unsigned long * nSize)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetResultEx(" << lpBuffer << "," << nSize << ")";
-	return Av::DETEx::keUnimplemented;
+	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetResultEx()"; // << lpBuffer << "," << nSize << ")";
+	if (m_pDETAction != NULL)
+	{
+		return m_pDETAction->GetResult(lpBuffer, nSize);
+	}
+	else
+		return Av::DETEx::keNoTransaction;
 }
 
 Av::DETEx::eError DETBaseExImpl::GetLastErrorEx(char * lpBuffer, unsigned long * nSize)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetLastErrorEx(" << lpBuffer << "," << nSize << ")";
-	return Av::DETEx::keUnimplemented;
+	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetLastErrorEx()"; // << lpBuffer << "," << nSize << ")";
+	if (m_pDETAction != NULL)
+	{
+		return m_pDETAction->GetError(lpBuffer, nSize);
+	}
+	else
+		return Av::DETEx::keNoTransaction;
 }
 
 Av::DETEx::eError DETBaseExImpl::GetStatusEx(Av::DETEx::Status * stat)

@@ -46,5 +46,7 @@
 #include <deque>
 #include <set>
 #include <atlenc.h>
+#include <string>
 
+#include "CommonDef.h"
 #include "Log.h"

@@ -3,7 +3,9 @@
 
 #include "stdafx.h"
 #include "CommonDef.h"
-//#include "ECSConnection.h"
+#include "ECSConnection.h"
+#include "XMLDomParser.h"
+
 #include "AvidECSArchiveDriver.h"
 
 #ifdef _DEBUG
@@ -24,13 +26,15 @@ CAvidECSArchiveDriverApp::CAvidECSArchiveDriverApp()
 	Output2FILE::Stream() = pFile;
 	FILELog::ReportingLevel() = FILELog::FromString("DEBUG");
 
-	FILE_LOG(logDEBUG) << "App Initialized";
-	FILE_LOG(logDEBUG) << "About to init ECS";
-
 	//Open ECS Connector
-	//CECSConnection::Init();
-
+	FILE_LOG(logDEBUG) << "About to init ECS: " << "(v1.6b)";
+	CECSConnection::Init();
 	FILE_LOG(logDEBUG) << "ECS Init Complete";
+
+	//Initialize the XML DOM Parser
+	//XMLDomParser::Initialize();
+
+	FILE_LOG(logDEBUG) << "App Initialized";
 }
 
 // The one and only CAvidECSArchiveDriverApp object
@@ -40,12 +44,5 @@ CAvidECSArchiveDriverApp theApp;
 BOOL CAvidECSArchiveDriverApp::InitInstance()
 {
 	CWinApp::InitInstance();
-
 	return TRUE;
 }
-
-class DummyClass {
-	static void Dummy() {
-
-	}
-};

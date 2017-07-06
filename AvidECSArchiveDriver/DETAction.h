@@ -10,7 +10,7 @@ class DETAction
 public:
 	virtual ~DETAction();
 	virtual Av::DETEx::eError Action(const char* lpXML);
-	virtual Av::DETEx::eError GetDETError(char* lpBuffer, unsigned long *nSize);
+	virtual Av::DETEx::eError GetError(char* lpBuffer, unsigned long *nSize);
 	virtual Av::DETEx::eError GetResult(char* lpBuffer, unsigned long *nSize);
 	virtual Av::DETEx::eError GetStatus(Av::DETEx::Status* stat);
 	virtual Av::DETEx::eError Pause();

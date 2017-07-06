@@ -64,8 +64,15 @@ const CString StateStrings[MaxStates] = {
 };
 
 #define DET_XML_TAG_DET "DET"
+
+#define DET_XML_TAG_BLOCKMOVESIZE "BlockMoveSize"
+#define DET_XML_TAG_DESTINATION "StoragePath"
 #define DET_XML_TAG_FILELIST "Filelist"
 #define DET_XML_TAG_METADATA "Metadata"
 #define DET_XML_TAG_NAME "Name"
+#define DET_XML_TAG_S3BUCKET "Bucket"
+#define DET_XML_TAG_S3SECRET "Secret"
+#define DET_XML_TAG_S3URL "Url"
+#define DET_XML_TAG_S3USER "User"
 #define DET_XML_TAG_SESSION "SessionID"
 #define DET_XML_TAG_VENDOR "DETVendorParams"
