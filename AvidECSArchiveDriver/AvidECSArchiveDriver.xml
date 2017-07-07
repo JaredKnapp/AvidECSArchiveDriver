@@ -15,7 +15,8 @@
 			</TransferOptions>
 			<StoragePath>C:\DET2\DETDestination\Media</StoragePath>
 			<ObjectStorage>
-				<Url>http://10.246.27.201:9024</Url>
+				<Url>10.246.27.201</Url>
+				<Port>9024</Port>
 				<User>avid</User>
 				<Secret>/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd</Secret>
 				<Bucket>avid-bucket</Bucket>

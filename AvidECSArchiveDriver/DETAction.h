@@ -21,14 +21,15 @@ protected:
 	DETAction();
 
 private:
+	Av::Int64 DETAction::CalculateTransferSize();
 	Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg);
 	void SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize = 0, Av::DETEx::eErrorType ErrType = Av::DETEx::ketSuccess);
 
 	static CriticalSection m_CriticalSection;
 
 	int m_CntFilesXfer;
-	Av::Int64 m_BytesXferred;
-	Av::Int64 m_TotalBytesToXfer;
+	Av::Int64 m_iBytesXferred;
+	Av::Int64 m_iTotalBytesToXfer;
 
 	HANDLE m_hndActionThread;
 
@@ -37,6 +38,5 @@ private:
 	DETState *m_pState;
 	CString m_sLastError;
 	CString m_sResultXML;
-
 };
 

@@ -159,7 +159,44 @@ bool XMLDomParser::parse() {
 
 }
 
-void XMLDomParser::parseFileList(DOMNode * root) {
+void XMLDomParser::parseFileList(DOMNode * root) 
+{
+	DOMNodeList* nodes = selectNodes(root, DET_XML_TAG_FILE);
+
+	// loop through all file nodes
+	for (XMLSize_t i = 0; i < nodes->getLength(); i++)
+	{
+		DETActionData::FileStruct FileInfo;
+		DOMNode* fileNode = nodes->item(i);
+
+		CString type = getSingleNodeValue(fileNode, DET_XML_TAG_TYPE);
+		if (type.Compare(_T("WG4"))==0)
+		{
+			CString archiveid = getSingleNodeValue(fileNode, DET_XML_TAG_ARCHIVE_ID);
+			CString tapename = getSingleNodeValue(fileNode, DET_XML_TAG_TAPE_NAME);
+
+			FILE_LOG(logDEBUG) << "XMLDomParser::parseFileList: " << "Files[" << i << "]=(" << archiveid << ", " << tapename << ")";
+
+			FileInfo.archiveID = archiveid;
+			FileInfo.tapename = tapename;
+			FileInfo.type = "WG4";
+		}
+		else
+		{
+			CString id = getSingleNodeValue(fileNode, DET_XML_TAG_ID);
+			CString fn = getSingleNodeValue(fileNode, DET_XML_TAG_FILENAME);
+			CString resolution = getSingleNodeValue(fileNode, DET_XML_TAG_RESOLUTION);
+
+			FILE_LOG(logDEBUG) << "XMLDomParser::parseFileList: " << "Files [" << i << "]=(" << id << ", " << fn << ", " << resolution << ")";
+
+			FileInfo.FileName = fn;
+			FileInfo.MetadataID = id;
+			FileInfo.FileSize = 0;
+
+			parsePartialRestoreSegments(fileNode, FileInfo.segments);
+		}
+		m_Data.m_FileStructList.push_back(FileInfo);
+	}
 }
 
 void XMLDomParser::parseMetadata(DOMNode * root) {
@@ -174,6 +211,7 @@ void XMLDomParser::parseVendor(DOMNode * root) {
 	CString sBlockMoveSizeStr = getSingleNodeValue(root, DET_XML_TAG_BLOCKMOVESIZE);
 	CString sDestination = getSingleNodeValue(root, DET_XML_TAG_DESTINATION);
 	CString sS3Url = getSingleNodeValue(root, DET_XML_TAG_S3URL);
+	CString sS3Port = getSingleNodeValue(root, DET_XML_TAG_S3PORT);
 	CString sS3User = getSingleNodeValue(root, DET_XML_TAG_S3USER);
 	CString sS3Secret = getSingleNodeValue(root, DET_XML_TAG_S3SECRET);
 	CString sS3Bucket = getSingleNodeValue(root, DET_XML_TAG_S3BUCKET);
@@ -181,8 +219,35 @@ void XMLDomParser::parseVendor(DOMNode * root) {
 	m_Data.m_lBlockSize = _wtol(sBlockMoveSizeStr);
 	m_Data.m_sDestination = sDestination;
 	m_Data.m_sS3Url = sS3Url;
+	m_Data.m_wS3Port = (WORD)_tcstoul(sS3Port, NULL, 10);
 	m_Data.m_sS3User = sS3User;
 	m_Data.m_sS3Secret = sS3Secret;
 	m_Data.m_sS3Bucket = sS3Bucket;
+}
+
+void XMLDomParser::parsePartialRestoreSegments(xercesc_3_1::DOMNode * root, DETActionData::SegmentVector & segments)
+{
+	DOMNode* segmentsNode = selectSingleNode(root, DET_XML_TAG_SEGMENTS);
+	if (segmentsNode != NULL)
+	{
+		DOMNodeList* segmentNodeList = selectNodes(segmentsNode, DET_XML_TAG_SEGMENT);
+
+		for (XMLSize_t index = 0; index < segmentNodeList->getLength(); index++)
+		{
+			DOMNode* segmentNode = segmentNodeList->item(index);
+
+			CString sStartOffset = getSingleNodeValue(segmentNode, DET_XML_TAG_STARTOFFSET);
+			CString sEndOffset = getSingleNodeValue(segmentNode, DET_XML_TAG_ENDOFFSET);
+			CString sPartialFileName = getSingleNodeValue(segmentNode, DET_XML_TAG_PARTIALFILENAME);
+
+			DETActionData::Segment seg;
+
+			seg.StartOffset = _tcstoi64(sStartOffset, NULL, 10);
+			seg.EndOffset = _tcstoi64(sEndOffset, NULL, 10);
+			seg.partialFn = sPartialFileName;
+
+			segments.push_back(seg);
+		}
+	}
 }
 

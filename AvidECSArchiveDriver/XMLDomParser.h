@@ -28,6 +28,7 @@ private:
 	void parseMetadata(xercesc_3_1::DOMNode* root);
 	void parseSession(xercesc_3_1::DOMNode* root);
 	void parseVendor(xercesc_3_1::DOMNode* root);
+	void parsePartialRestoreSegments(xercesc_3_1::DOMNode* root, DETActionData::SegmentVector& segments);
 
 	const char* m_lpInputXML;
 	DETActionData& m_Data;

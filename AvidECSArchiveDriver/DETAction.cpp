@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "ECSConnection.h"
-
 #include "Messages.h"
 #include "DETState.h"
 #include "XMLDOMParser.h"
@@ -16,8 +15,8 @@ DETAction::DETAction() :
 	m_pState(NULL),
 	m_hndActionThread(NULL),
 	m_CntFilesXfer(0),
-	m_BytesXferred(0),
-	m_TotalBytesToXfer(0)
+	m_iBytesXferred(0),
+	m_iTotalBytesToXfer(0)
 {
 	m_CriticalSection.Enter();
 
@@ -56,20 +55,20 @@ DETAction::~DETAction() {
 
 Av::DETEx::eError DETAction::Action(const char * lpXML)
 {
+	Av::DETEx::eError Error = Av::DETEx::keNoError;
 	bool StateSet = false;
 	DWORD ErrorCode = 0;
 
-	Av::DETEx::eError Error = Av::DETEx::keNoError;
-
 	try
 	{
-		//first check that we are in the Idle
-		//or krsCancel state before we perform
-		//the Push
+		//first check that we are in the Idle or krsCancel state before we perform the Push
 		if (StateSet = m_pState->SetState(vrskrsRun))
 		{
 			XMLDomParser xmlParser(m_Data, lpXML);
-			xmlParser.parse();
+			if (xmlParser.parse()) {
+				m_iTotalBytesToXfer = CalculateTransferSize();
+
+			}
 		}
 	}
 	catch (...)
@@ -264,6 +263,77 @@ Av::DETEx::eError DETAction::Cancel()
 /***************************************
 PRIVATE METHODS
 ****************************************/
+
+Av::Int64 DETAction::CalculateTransferSize() {
+	//determine the sizes for the individual files to moved and record the values in the FileStruct for each file
+	Av::Int64 iBytesToXFer = 0;
+
+	int iNumElements = (int)m_Data.m_FileStructList.size();
+	FILE_LOG(logDEBUG) << "DETAction::Action: " << "Found " << iNumElements << " files to process";
+	for (int index = 0; index < iNumElements; index++)
+	{
+		DETActionData::FileStruct& FileElement = m_Data.m_FileStructList[index];
+		CString sType = m_Data.m_FileStructList[index].type;
+		FILE_LOG(logDEBUG) << "DETAction::Action: " << "Type=" << sType;
+		if (sType.Compare(_T("WG4")) != 0)
+		{
+			CString sSourceFileName = m_Data.m_FileStructList[index].FileName;
+			FILE_LOG(logDEBUG) << "DETAction::Action: " << "SourceFilename=" << sSourceFileName;
+
+			//open file to get its handle, and then, get file size
+			HANDLE FileHnd = INVALID_HANDLE_VALUE;
+			try
+			{
+				FileHnd = CreateFile(sSourceFileName,
+					GENERIC_READ, FILE_SHARE_READ, NULL,
+					OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
+					NULL);
+
+				if (FileHnd != INVALID_HANDLE_VALUE)
+				{
+					if (FileElement.segments.size() > 0)
+					{
+						// partial restore
+						DETActionData::SegmentVector_iterator segVectorIter;
+						FileElement.FileSize = 0;
+
+						for (segVectorIter = FileElement.segments.begin();
+							segVectorIter != FileElement.segments.end();
+							segVectorIter++)
+						{
+							DETActionData::Segment s = *segVectorIter;
+							FileElement.FileSize += s.EndOffset - s.StartOffset;
+						}
+					}
+					else
+					{
+						// full restore
+						Av::Int64 size = myGetFileSize(FileHnd);
+						FileElement.FileSize = size;
+					}
+					FILE_LOG(logDEBUG) << "DETAction::Action: SourceFile size=" << FileElement.FileSize; 
+					iBytesToXFer += FileElement.FileSize;
+					CloseHandle(FileHnd);
+					FileHnd = INVALID_HANDLE_VALUE;
+				}
+				else
+				{
+					FormatW32ErrorMessage(GetLastError(), m_sLastError);
+					SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
+				}
+			}
+			catch (...)
+			{
+				if (FileHnd != INVALID_HANDLE_VALUE)
+				{
+					try { CloseHandle(FileHnd); }
+					catch (...) {}
+				}
+			}
+		}
+	}
+}
+
 Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg)
 {
 	m_sLastError = msg;
@@ -285,20 +355,20 @@ void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx:
 	m_Status.Code = Code;
 	m_Status.ErrorType = ErrType;
 	m_Status.State = m_pState->GetState();
-	m_Status.TotalKBytesToXfer = m_TotalBytesToXfer;
+	m_Status.TotalKBytesToXfer = m_iTotalBytesToXfer;
 
 	if (FileSize != 0)
 	{
-		m_BytesXferred += FileSize;
-		m_Status.KBytesXferred = m_BytesXferred;
+		m_iBytesXferred += FileSize;
+		m_Status.KBytesXferred = m_iBytesXferred;
 	}
 
 	//Infosys - If there is nothing to transfer, percentage is always 100. Added the else if part
-	if (m_TotalBytesToXfer > 0)
+	if (m_iTotalBytesToXfer > 0)
 	{
-		m_Status.PercentXferComplete = (int)(m_Status.KBytesXferred * 100 / m_TotalBytesToXfer);
+		m_Status.PercentXferComplete = (int)(m_Status.KBytesXferred * 100 / m_iTotalBytesToXfer);
 	}
-	else if (m_TotalBytesToXfer == 0)
+	else if (m_iTotalBytesToXfer == 0)
 	{
 		m_Status.PercentXferComplete = 100;
 	}
@@ -307,4 +377,3 @@ void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx:
 
 	FILE_LOG(logDEBUG) << "m_Status, Code=" << m_Status.Code << ",ErrorType=" << m_Status.ErrorType << ",State=" << m_Status.State << ",TotalKBytesToXfer=" << m_Status.TotalKBytesToXfer << ",KBytesXferred=" << m_Status.KBytesXferred << ",PercentXferComplete=" << m_Status.PercentXferComplete << ")";
 }
-

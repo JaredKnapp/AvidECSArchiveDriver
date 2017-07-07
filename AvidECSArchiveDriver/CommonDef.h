@@ -5,6 +5,7 @@
 
 #define DETEXPORT extern "C" __declspec(dllexport)
 #define LOGFILENAME "c:\\temp\\AvidECSArchiveDriver.log"
+#define IDS_UNKNOWN_ERROR "Unknown error code %08x (%d)"
 
 //Internal state table for DETPush and DETPull.  The interal states are
 //used to control what eRunState and eError values are returned to the
@@ -65,14 +66,62 @@ const CString StateStrings[MaxStates] = {
 
 #define DET_XML_TAG_DET "DET"
 
+#define DET_XML_TAG_ARCHIVE_ID "ArchiveID"
 #define DET_XML_TAG_BLOCKMOVESIZE "BlockMoveSize"
 #define DET_XML_TAG_DESTINATION "StoragePath"
+#define DET_XML_TAG_ENDOFFSET "EndOffset"
+#define DET_XML_TAG_FILE "File"
 #define DET_XML_TAG_FILELIST "Filelist"
+#define DET_XML_TAG_FILENAME "Filename"
+#define DET_XML_TAG_ID "ID"
 #define DET_XML_TAG_METADATA "Metadata"
 #define DET_XML_TAG_NAME "Name"
+#define DET_XML_TAG_PARTIALFILENAME "PartialFilename"
+#define DET_XML_TAG_RESOLUTION "Resolution"
 #define DET_XML_TAG_S3BUCKET "Bucket"
+#define DET_XML_TAG_S3PORT "Port"
 #define DET_XML_TAG_S3SECRET "Secret"
 #define DET_XML_TAG_S3URL "Url"
 #define DET_XML_TAG_S3USER "User"
+#define DET_XML_TAG_SEGMENT "Segment"
+#define DET_XML_TAG_SEGMENTS "Segments"
 #define DET_XML_TAG_SESSION "SessionID"
+#define DET_XML_TAG_STARTOFFSET "StartOffset"
+#define DET_XML_TAG_TAPE_NAME "TapeName"
+#define DET_XML_TAG_TYPE "Type"
 #define DET_XML_TAG_VENDOR "DETVendorParams"
+
+//Common Static Methods
+
+static __int64 myGetFileSize(HANDLE hf)
+{
+	LARGE_INTEGER li;
+	DWORD high;
+
+	li.LowPart = GetFileSize(hf, &high);
+	li.HighPart = high;
+
+	return li.QuadPart;
+}
+
+static void FormatW32ErrorMessage(DWORD err, CString& sError)
+{
+	LPTSTR lpMsgBuf;
+	if (FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		err,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		(LPTSTR)&lpMsgBuf,
+		0,
+		NULL))
+	{
+		LPTSTR p = _tcsrchr(lpMsgBuf, _T('\r'));
+		if (p != NULL) *p = _T('\0');
+		sError = lpMsgBuf;
+		::LocalFree(lpMsgBuf);
+	}
+}
+
