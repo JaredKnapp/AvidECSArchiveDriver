@@ -26,7 +26,7 @@ protected:
 	//dummy placeholder. Should be implemented by push/pull... Action classes
 	virtual bool TransferFile(unsigned long index) { return false; }
 
-	//CECSConnection m_ECSConnection;
+	CECSConnection m_ECSConnection;
 	DETActionData m_Data;
 
 private:

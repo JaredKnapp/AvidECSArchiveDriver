@@ -62,16 +62,16 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 	DETAction *pAction = static_cast<DETAction*>(pDETAction);
 	Av::DETEx::eError Error = Av::DETEx::keNoError;
 
-	//bool isSSL = false;
-	//if (pAction->m_Data.m_wS3Port == 9021) isSSL = true;
-
-	//deque<CString> IPList;
-	//IPList.push_back(_T("10.246.27.201"));
-	//pAction->m_ECSConnection.SetIPList(IPList);
-	//pAction->m_ECSConnection.SetPort(9020);
-	//pAction->m_ECSConnection.SetSSL(FALSE);
-	//pAction->m_ECSConnection.SetS3KeyID(_T("avid"));
-	//pAction->m_ECSConnection.SetSecret(_T("/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd"));
+	//Establish ECS Connection
+	deque<CString> IPList;
+	IPList.push_back(_T("10.246.27.201"));
+	pAction->m_ECSConnection.SetIPList(IPList);
+	pAction->m_ECSConnection.SetS3KeyID(_T("avid"));
+	pAction->m_ECSConnection.SetSecret(_T("Sb0+RFz1jXu0WR5pYmNV1uE88uCnaGoInn2+40yn"));
+	pAction->m_ECSConnection.SetSSL(FALSE);
+	pAction->m_ECSConnection.SetPort(9020);
+	pAction->m_ECSConnection.SetHost(_T("ECS Community Edition"));
+	pAction->m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
 
 	//retrieve the number of files to be moved
 	long NumElementsToMove = (long)pAction->m_Data.m_FileStructList.size();
