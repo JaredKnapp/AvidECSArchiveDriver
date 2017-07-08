@@ -4,6 +4,6 @@
 
 class DETActionPush : public DETAction
 {
-
+	virtual bool TransferFile(unsigned long index);
 };
 

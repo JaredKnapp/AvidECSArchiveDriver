@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include "ECSConnection.h"
 #include "Messages.h"
 #include "DETState.h"
-#include "XMLDOMParser.h"
+#include "XMLDomGenerator.h"
+#include "XMLDomParser.h"
 #include "DETAction.h"
 
 
@@ -53,6 +53,75 @@ DETAction::~DETAction() {
 	}
 }
 
+unsigned int DETAction::TransferFiles(void * pDETAction)
+{
+	FILE_LOG(logDEBUG) << "DETAction:TransferFile - YOU ARE HERE!!!";
+
+	CString sError;
+	DWORD dwErrorCode = 0;
+	DETAction *pAction = static_cast<DETAction*>(pDETAction);
+	Av::DETEx::eError Error = Av::DETEx::keNoError;
+
+	//bool isSSL = false;
+	//if (pAction->m_Data.m_wS3Port == 9021) isSSL = true;
+
+	//deque<CString> IPList;
+	//IPList.push_back(_T("10.246.27.201"));
+	//pAction->m_ECSConnection.SetIPList(IPList);
+	//pAction->m_ECSConnection.SetPort(9020);
+	//pAction->m_ECSConnection.SetSSL(FALSE);
+	//pAction->m_ECSConnection.SetS3KeyID(_T("avid"));
+	//pAction->m_ECSConnection.SetSecret(_T("/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd"));
+
+	//retrieve the number of files to be moved
+	long NumElementsToMove = (long)pAction->m_Data.m_FileStructList.size();
+	long i = 0;
+	for (; i < NumElementsToMove; i++)
+	{
+		try
+		{
+			if (pAction->m_pState->IsValid(vrskrsRun))
+			{
+				if (!pAction->TransferFile(i))
+				{
+					pAction->m_pState->SetState(vrsNone);
+					FILE_LOG(logERROR) << "DETAction:TransferFiles(...) - " << "Failed to transfer file and setting state to vrsNone";
+					pAction->m_hndActionThread = NULL;
+					ExitThread((DWORD)FM_EXITTHREAD);
+					break;
+				}
+			}
+		}
+		catch (...)
+		{
+			//log unknown exception from the wait on events
+			pAction->m_pState->SetState(vrsNone);
+			FILE_LOG(logERROR) << sUnknownException;
+			pAction->m_hndActionThread = NULL;
+			ExitThread((DWORD)FM_EXITTHREAD);
+		}
+	}
+
+	if (i >= NumElementsToMove)
+	{
+		pAction->m_sLastError = sTransferSuccessMsg;
+		pAction->StoreCookieXML();
+
+		//if we get here, it means we have finished the transfer.
+		//Thus, we need to change state to close on push completion
+		if (!pAction->m_pState->SetState(vrsFinish))
+		{
+			//we were not able to change to the finish state
+			FILE_LOG(logERROR) << sStateNoChangeMsg;
+			Error = Av::DETEx::keInternalError;
+		}
+
+		pAction->SetStatus(Error);
+	}
+
+	return 0;
+}
+
 Av::DETEx::eError DETAction::Action(const char * lpXML)
 {
 	Av::DETEx::eError Error = Av::DETEx::keNoError;
@@ -68,6 +137,23 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 			if (xmlParser.parse()) {
 				m_iTotalBytesToXfer = CalculateTransferSize();
 
+				//Okay to perform send and create the thread
+				if (m_hndActionThread == NULL)
+				{
+					m_hndActionThread = (HANDLE)_beginthreadex(NULL, 0, DETAction::TransferFiles, (void *)this, 0, NULL);
+				}
+				else
+				{
+					FILE_LOG(logERROR) << sThreadExistsMsg;
+					m_sLastError = sThreadExistsMsg;
+					SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
+				}
+			}
+			else
+			{
+				FILE_LOG(logERROR) << sXMLParseError;
+				m_sLastError = sXMLParseError;
+				SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 			}
 		}
 	}
@@ -260,10 +346,6 @@ Av::DETEx::eError DETAction::Cancel()
 	return Error;
 }
 
-/***************************************
-PRIVATE METHODS
-****************************************/
-
 Av::Int64 DETAction::CalculateTransferSize() {
 	//determine the sizes for the individual files to moved and record the values in the FileStruct for each file
 	Av::Int64 iBytesToXFer = 0;
@@ -311,7 +393,7 @@ Av::Int64 DETAction::CalculateTransferSize() {
 						Av::Int64 size = myGetFileSize(FileHnd);
 						FileElement.FileSize = size;
 					}
-					FILE_LOG(logDEBUG) << "DETAction::Action: SourceFile size=" << FileElement.FileSize; 
+					FILE_LOG(logDEBUG) << "DETAction::Action: SourceFile size=" << FileElement.FileSize;
 					iBytesToXFer += FileElement.FileSize;
 					CloseHandle(FileHnd);
 					FileHnd = INVALID_HANDLE_VALUE;
@@ -332,6 +414,7 @@ Av::Int64 DETAction::CalculateTransferSize() {
 			}
 		}
 	}
+	return iBytesToXFer;
 }
 
 Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg)
@@ -376,4 +459,10 @@ void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx:
 	m_CriticalSection.Leave();
 
 	FILE_LOG(logDEBUG) << "m_Status, Code=" << m_Status.Code << ",ErrorType=" << m_Status.ErrorType << ",State=" << m_Status.State << ",TotalKBytesToXfer=" << m_Status.TotalKBytesToXfer << ",KBytesXferred=" << m_Status.KBytesXferred << ",PercentXferComplete=" << m_Status.PercentXferComplete << ")";
+}
+
+void DETAction::StoreCookieXML()
+{
+	XMLDomGenerator generator(m_Data);
+	generator.generate(m_sResultXML);
 }

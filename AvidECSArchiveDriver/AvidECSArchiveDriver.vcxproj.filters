@@ -42,6 +42,9 @@
     <ClCompile Include="XMLDomParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="XMLDomGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvidECSArchiveDriver.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XMLDomParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLDomGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,5 +11,7 @@ const CString sStateNoChangeMsg = _T(" DET session state has not been changed.  
 const CString sTransferNotResumedMsg = _T(" File move transfer has not resumed.");
 const CString sTransferNotSuspendedMsg = _T(" File move transfer has not been suspended.");
 const CString sTransferResumedMsg = _T(" File move transfer has resumed.");
+const CString sTransferSuccessMsg = _T(" File move transfer completed successfully.");
 const CString sTransferSuspendedMsg = _T(" File move transfer is suspended.");
 const CString sUnknownException = _T(" Unknown exception ocurred.");
+const CString sXMLParseError = _T(" Error parsing incoming DET XML.");

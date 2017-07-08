@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Av\DETEx.h>
+#include "ECSConnection.h"
 #include "CriticalSection.h"
 #include "DETActionData.h"
-
 
 class DETAction
 {
@@ -20,10 +20,20 @@ public:
 protected:
 	DETAction();
 
+	//thread routine called by Send to perform file move
+	static unsigned int WINAPI TransferFiles(void *pDETAction);
+
+	//dummy placeholder. Should be implemented by push/pull... Action classes
+	virtual bool TransferFile(unsigned long index) { return false; }
+
+	//CECSConnection m_ECSConnection;
+	DETActionData m_Data;
+
 private:
 	Av::Int64 DETAction::CalculateTransferSize();
 	Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg);
 	void SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize = 0, Av::DETEx::eErrorType ErrType = Av::DETEx::ketSuccess);
+	virtual void StoreCookieXML();
 
 	static CriticalSection m_CriticalSection;
 
@@ -33,7 +43,6 @@ private:
 
 	HANDLE m_hndActionThread;
 
-	DETActionData m_Data;
 	Av::DETEx::Status m_Status;
 	DETState *m_pState;
 	CString m_sLastError;
