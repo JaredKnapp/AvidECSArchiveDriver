@@ -23,6 +23,9 @@ protected:
 	//thread routine called by Send to perform file move
 	static unsigned int WINAPI TransferFiles(void *pDETAction);
 
+	virtual CString LookupDirectoryByID(int index);
+	virtual CString CreatePath(CString SrcFilePath, CString DestPath);
+
 	//dummy placeholder. Should be implemented by push/pull... Action classes
 	virtual bool TransferFile(unsigned long index) { return false; }
 

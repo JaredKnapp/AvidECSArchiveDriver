@@ -4,29 +4,26 @@
 
 #include "DETActionPush.h"
 
+
+
+
 bool DETActionPush::TransferFile(unsigned long index)
 {
 	//Push file to ECS
 	CECSConnection::S3_ERROR Error;
 
-	// get the list of buckets
-	CECSConnection::S3_SERVICE_INFO ServiceInfo;
-	Error = m_ECSConnection.S3ServiceInformation(ServiceInfo);
-	if (Error.IfError())
-	{
-		_tprintf(_T("S3ServiceInformation error: %s\n"), (LPCTSTR)Error.Format());
-	}
-	else
-	{
-		// dump service info
-		_tprintf(_T("OwnerID: %s, Name: %s\n"), (LPCTSTR)ServiceInfo.sOwnerID, (LPCTSTR)ServiceInfo.sOwnerDisplayName);
-		for (list<CECSConnection::S3_BUCKET_INFO>::const_iterator itList = ServiceInfo.BucketList.begin();
-			itList != ServiceInfo.BucketList.end();
-			++itList)
-		{
-			_tprintf(_T("  Bucket: %s: %s\n"), (LPCTSTR)itList->sName, (LPCTSTR)DateTimeStr(&itList->ftCreationDate, true, true, true, false, true));
-		}
-	}
+	DETActionData::FileStruct& fileElement = m_Data.m_FileStructList[index];
+	CString DestPath;
+	CString DestDir = LookupDirectoryByID(index);
+	DestPath = CreatePath(fileElement.FileName, DestDir);
+	CString srcFilePath = fileElement.FileName;
 
-	return true;
+	bool tmp = true;
+
+	//Push to ECS
+	//DETAction::CreateDirectories(DestDir);
+	//tmp = DETAction::TransferFile(srcFilePath, DestPath, fileElement.FileSize);
+
+	if (tmp) fileElement.transferSuccess = true;
+	return tmp;
 }

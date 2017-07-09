@@ -11,6 +11,20 @@ CriticalSection DETAction::m_CriticalSection;
 bool m_bShuttingDown = false;
 
 
+int LastIndexOf(const CString& s1, const CString& s2)
+{
+	int found = -1;
+	int next_pos = 0;
+	for (;;)
+	{
+		next_pos = s1.Find(s2, next_pos);
+		if (next_pos == -1)
+			return found;
+
+		found = next_pos;
+	};
+}
+
 DETAction::DETAction() :
 	m_pState(NULL),
 	m_hndActionThread(NULL),
@@ -465,4 +479,58 @@ void DETAction::StoreCookieXML()
 {
 	XMLDomGenerator generator(m_Data);
 	generator.generate(m_sResultXML);
+}
+
+CString DETAction::LookupDirectoryByID(int index)
+{
+	DETActionData::FileStruct& element = m_Data.m_FileStructList[index];
+	CString id = element.MetadataID;
+	CString storagePath = m_Data.m_sDestination;
+	CString dir = storagePath;
+	CString hashedDir = id.Mid(42, 2); // .substr(42, 2);
+
+	dir += "\\";
+	dir += hashedDir;
+	dir += "\\";
+	dir += id;
+
+	return dir;
+}
+
+CString DETAction::CreatePath(CString SrcFilePath, CString DestPath)
+{
+	CString FullDestPath = DestPath;
+	CString strFilename;
+	std::string::size_type len_pos = 0;
+	std::string::size_type position = 0;
+	CString SearchStr = _T("\\/");
+
+	len_pos = SrcFilePath.GetLength() + 1;
+	position = LastIndexOf(SrcFilePath, SearchStr); //SrcFilePath.find_last_of(SearchStr);
+	if (position == std::string::npos && !SrcFilePath.IsEmpty())
+	{
+		// assume that the file name was passed in without a path
+		// and just take the string and build the destpath\filename... 
+
+		FullDestPath += "\\";
+		FullDestPath += SrcFilePath;
+	}
+	else if (position != len_pos - 1)
+	{
+		//Extract filename and ext and add it to the destination path
+		strFilename = SrcFilePath.Mid((position + 1), (std::string::npos - position));
+
+		//check if DestPath has ending backslash
+		len_pos = DestPath.GetLength() + 1;
+		position = LastIndexOf(DestPath, SearchStr);
+
+		if (position != len_pos - 1)
+		{
+			FullDestPath += _T("\\");
+		}
+
+		FullDestPath += strFilename;
+	}
+
+	return FullDestPath;
 }

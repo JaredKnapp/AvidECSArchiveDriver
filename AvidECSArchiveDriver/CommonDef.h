@@ -135,3 +135,4 @@ static void FormatW32ErrorMessage(DWORD err, CString& sError)
 	}
 }
 
+
