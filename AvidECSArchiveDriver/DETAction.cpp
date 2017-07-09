@@ -64,13 +64,13 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 
 	//Establish ECS Connection
 	deque<CString> IPList;
-	IPList.push_back(_T("10.246.27.201"));
+	IPList.push_back(pAction->m_Data.m_sS3Url);
 	pAction->m_ECSConnection.SetIPList(IPList);
-	pAction->m_ECSConnection.SetS3KeyID(_T("avid"));
+	pAction->m_ECSConnection.SetS3KeyID(pAction->m_Data.m_sS3User);
 	pAction->m_ECSConnection.SetSecret(_T("Sb0+RFz1jXu0WR5pYmNV1uE88uCnaGoInn2+40yn"));
 	pAction->m_ECSConnection.SetSSL(FALSE);
-	pAction->m_ECSConnection.SetPort(9020);
-	pAction->m_ECSConnection.SetHost(_T("ECS Community Edition"));
+	pAction->m_ECSConnection.SetPort(pAction->m_Data.m_wS3Port);
+	pAction->m_ECSConnection.SetHost(_T("ECS S3 API"));
 	pAction->m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
 
 	//retrieve the number of files to be moved
