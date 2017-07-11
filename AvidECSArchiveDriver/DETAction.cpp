@@ -2,6 +2,7 @@
 
 #include "Messages.h"
 #include "DETState.h"
+//#include "NTERRTXT.H"
 #include "XMLDomGenerator.h"
 #include "XMLDomParser.h"
 #include "DETAction.h"
@@ -77,12 +78,14 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 	Av::DETEx::eError Error = Av::DETEx::keNoError;
 
 	//Establish ECS Connection
+	bool isSSL = (pAction->m_Data.m_wS3Port == 9021 || pAction->m_Data.m_wS3Port == 443);
+
 	deque<CString> IPList;
 	IPList.push_back(pAction->m_Data.m_sS3Url);
 	pAction->m_ECSConnection.SetIPList(IPList);
 	pAction->m_ECSConnection.SetS3KeyID(pAction->m_Data.m_sS3User);
-	pAction->m_ECSConnection.SetSecret(_T("Sb0+RFz1jXu0WR5pYmNV1uE88uCnaGoInn2+40yn"));
-	pAction->m_ECSConnection.SetSSL(FALSE);
+	pAction->m_ECSConnection.SetSecret(pAction->m_Data.m_sS3Secret);
+	pAction->m_ECSConnection.SetSSL(isSSL);
 	pAction->m_ECSConnection.SetPort(pAction->m_Data.m_wS3Port);
 	pAction->m_ECSConnection.SetHost(_T("ECS S3 API"));
 	pAction->m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
@@ -377,15 +380,15 @@ Av::Int64 DETAction::CalculateTransferSize() {
 			FILE_LOG(logDEBUG) << "DETAction::Action: " << "SourceFilename=" << sSourceFileName;
 
 			//open file to get its handle, and then, get file size
-			HANDLE FileHnd = INVALID_HANDLE_VALUE;
+			HANDLE hFile = INVALID_HANDLE_VALUE;
 			try
 			{
-				FileHnd = CreateFile(sSourceFileName,
+				hFile = CreateFile(sSourceFileName,
 					GENERIC_READ, FILE_SHARE_READ, NULL,
 					OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
 					NULL);
 
-				if (FileHnd != INVALID_HANDLE_VALUE)
+				if (hFile != INVALID_HANDLE_VALUE)
 				{
 					if (FileElement.segments.size() > 0)
 					{
@@ -403,14 +406,17 @@ Av::Int64 DETAction::CalculateTransferSize() {
 					}
 					else
 					{
-						// full restore
-						Av::Int64 size = myGetFileSize(FileHnd);
-						FileElement.FileSize = size;
+						// full archive / restore
+						LARGE_INTEGER liFileSize;
+						if (GetFileSizeEx(hFile, &liFileSize))
+						{
+							FileElement.FileSize = liFileSize.QuadPart;
+						}
 					}
 					FILE_LOG(logDEBUG) << "DETAction::Action: SourceFile size=" << FileElement.FileSize;
 					iBytesToXFer += FileElement.FileSize;
-					CloseHandle(FileHnd);
-					FileHnd = INVALID_HANDLE_VALUE;
+					CloseHandle(hFile);
+					hFile = INVALID_HANDLE_VALUE;
 				}
 				else
 				{
@@ -420,9 +426,9 @@ Av::Int64 DETAction::CalculateTransferSize() {
 			}
 			catch (...)
 			{
-				if (FileHnd != INVALID_HANDLE_VALUE)
+				if (hFile != INVALID_HANDLE_VALUE)
 				{
-					try { CloseHandle(FileHnd); }
+					try { CloseHandle(hFile); }
 					catch (...) {}
 				}
 			}
@@ -481,56 +487,93 @@ void DETAction::StoreCookieXML()
 	generator.generate(m_sResultXML);
 }
 
-CString DETAction::LookupDirectoryByID(int index)
+bool DETAction::CreateDirectories(CString sDirectoryPath)
 {
-	DETActionData::FileStruct& element = m_Data.m_FileStructList[index];
-	CString id = element.MetadataID;
-	CString storagePath = m_Data.m_sDestination;
-	CString dir = storagePath;
-	CString hashedDir = id.Mid(42, 2); // .substr(42, 2);
+	FILE_LOG(logDEBUG) << "DETAction::CreateDirectories(" << sDirectoryPath << ")";
+	CString sDirectoryToCreate = sDirectoryPath;
+	std::string::size_type pos = 0, slash_pos = 0, tmp_pos = 0;
+	BOOL bResult = TRUE;
+	bool isFinished = false;
+	const int iEndUNCHeader = 4;
+	DWORD ulErrCode;
 
-	dir += "\\";
-	dir += hashedDir;
-	dir += "\\";
-	dir += id;
+	//first determine if we are drive letter or UNC based
+	if ((slash_pos = sDirectoryPath.Find(L":", tmp_pos)) != std::string::npos)
+	{
+		tmp_pos = slash_pos;
 
-	return dir;
+		//adjust slash_pos beyond the first back slash
+		slash_pos = sDirectoryPath.Find(L"\\/", tmp_pos);
+		tmp_pos = slash_pos + 1;
+	}
+	else
+	{
+		//get by volume name
+		for (int idx = 0; idx < iEndUNCHeader; idx++)
+		{
+			slash_pos = sDirectoryPath.Find(L"\\/", tmp_pos);
+			tmp_pos = slash_pos + 1;
+		}
+	}
+
+	do
+	{
+		//parse input dir path to create each directory in sucession
+		if ((slash_pos = sDirectoryPath.Find(L"\\/", tmp_pos)) != std::string::npos)
+		{
+			//form directory name
+			sDirectoryToCreate = sDirectoryPath.Mid(pos, (slash_pos - pos));
+			if ((DWORD)-1 == GetFileAttributes(sDirectoryToCreate))
+			{
+				bResult = CreateDirectory(sDirectoryToCreate, NULL);
+				FILE_LOG(logDEBUG) << "DETAction::CreateDirectory(" << sDirectoryToCreate << "), Result=" << bResult;
+			}
+			else
+			{
+				bResult = ERROR_ALREADY_EXISTS;
+			}
+
+			tmp_pos = slash_pos + 1;
+		}
+		else
+		{
+			bResult = CreateDirectory(sDirectoryPath, NULL); // todo: rework this function not to attempt to create directories that already exist.
+			FILE_LOG(logDEBUG) << "DETAction::CreateDirectory(" << sDirectoryPath << "), Result=" << bResult;
+			isFinished = true;
+		}
+	} while (!isFinished && (bResult || ((ulErrCode = GetLastError()) == ERROR_ALREADY_EXISTS)));
+
+	return (bResult ? true : false);
 }
 
-CString DETAction::CreatePath(CString SrcFilePath, CString DestPath)
+CString DETAction::BuildArchiveDir(CString sMetadataId)
 {
-	CString FullDestPath = DestPath;
-	CString strFilename;
-	std::string::size_type len_pos = 0;
-	std::string::size_type position = 0;
-	CString SearchStr = _T("\\/");
+	CString sArchiveDir;
+	CString sHashedDir = sMetadataId.Mid(42, 2);
 
-	len_pos = SrcFilePath.GetLength() + 1;
-	position = LastIndexOf(SrcFilePath, SearchStr); //SrcFilePath.find_last_of(SearchStr);
-	if (position == std::string::npos && !SrcFilePath.IsEmpty())
-	{
-		// assume that the file name was passed in without a path
-		// and just take the string and build the destpath\filename... 
+	sArchiveDir.Format(L"/%s/%s/%s/", m_Data.m_sS3Bucket, sHashedDir, sMetadataId);
+	return sArchiveDir;
+}
 
-		FullDestPath += "\\";
-		FullDestPath += SrcFilePath;
-	}
-	else if (position != len_pos - 1)
-	{
-		//Extract filename and ext and add it to the destination path
-		strFilename = SrcFilePath.Mid((position + 1), (std::string::npos - position));
+CString DETAction::ParsePath(CString sFullPath)
+{
+	CString sPath = sFullPath.Left(sFullPath.ReverseFind('\\'));
+	return sPath;
+}
 
-		//check if DestPath has ending backslash
-		len_pos = DestPath.GetLength() + 1;
-		position = LastIndexOf(DestPath, SearchStr);
+CString DETAction::CreatePath(CString sArchiveDir, CString sSourceFullPath)
+{
+	CString sFullPathFormatted;
+	CString sDestFullPath;
 
-		if (position != len_pos - 1)
-		{
-			FullDestPath += _T("\\");
-		}
+	wchar_t lpSep = (sSourceFullPath.ReverseFind('\\') > 0) ? '\\' : '/';
 
-		FullDestPath += strFilename;
-	}
+	//Extract the filename from the source FullPath
+	sFullPathFormatted.Format(L"%s%s", lpSep, sSourceFullPath);
+	CString sFileName = sFullPathFormatted.Mid(sFullPathFormatted.ReverseFind(lpSep) + 1);
 
-	return FullDestPath;
+	//Combine the DestPath, with the filename
+	sDestFullPath.Format(L"%s/%s", sArchiveDir, sFileName);
+
+	return sDestFullPath;
 }

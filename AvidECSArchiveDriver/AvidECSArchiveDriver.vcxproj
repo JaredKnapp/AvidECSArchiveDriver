@@ -99,14 +99,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\AvidECSArchiveDriver.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>ECSUtil.lib;xerces-c_3.lib</AdditionalDependencies>
+      <AdditionalDependencies>ECSUtil.lib;xerces-c_3D.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform);$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)</AdditionalLibraryDirectories>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
@@ -125,7 +125,8 @@
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
+copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -135,14 +136,14 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\AvidECSArchiveDriver.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalDependencies>ECSUtil.lib;xerces-c_3.lib</AdditionalDependencies>
+      <AdditionalDependencies>ECSUtil.lib;xerces-c_3D.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Configuration)\$(Platform);$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)</AdditionalLibraryDirectories>
       <ShowProgress>NotSet</ShowProgress>
     </Link>
@@ -161,7 +162,8 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
+copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -173,7 +175,7 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -201,7 +203,8 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
+copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -213,7 +216,7 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;..\include\AvSupport\xerces-c-3.1.4\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -241,7 +244,8 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
+copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -252,7 +256,10 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     <ClCompile Include="DETAction.cpp" />
     <ClCompile Include="DETActionData.cpp" />
     <ClCompile Include="DETActionFactory.cpp" />
+    <ClCompile Include="DETActionIterate.cpp" />
+    <ClCompile Include="DETActionPull.cpp" />
     <ClCompile Include="DETActionPush.cpp" />
+    <ClCompile Include="DETActionRemove.cpp" />
     <ClCompile Include="DETBaseExImpl.cpp" />
     <ClCompile Include="DETState.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -271,7 +278,10 @@ copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"</Command>
     <ClInclude Include="DETAction.h" />
     <ClInclude Include="DETActionData.h" />
     <ClInclude Include="DETActionFactory.h" />
+    <ClInclude Include="DETActionIterate.h" />
+    <ClInclude Include="DETActionPull.h" />
     <ClInclude Include="DETActionPush.h" />
+    <ClInclude Include="DETActionRemove.h" />
     <ClInclude Include="DETBaseExImpl.h" />
     <ClInclude Include="DETState.h" />
     <ClInclude Include="Log.h" />

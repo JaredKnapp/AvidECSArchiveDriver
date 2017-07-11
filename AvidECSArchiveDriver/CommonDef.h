@@ -7,6 +7,11 @@
 #define LOGFILENAME "c:\\temp\\AvidECSArchiveDriver.log"
 #define IDS_UNKNOWN_ERROR "Unknown error code %08x (%d)"
 
+#define NUL (_T('\0'))
+#define GIGABYTES(x) ((x) * 0x40000000)
+#define MEGABYTES(x) ((x) * 0x100000)
+#define KILOBYTES(x) ((x) * 0x400)
+
 //Internal state table for DETPush and DETPull.  The interal states are
 //used to control what eRunState and eError values are returned to the
 //caller on a state transition, as well as, controlling the operation
@@ -97,23 +102,6 @@ const int FM_EXITTHREAD = (DET_CODE | 0x0002);
 #define DET_XML_TAG_TYPE "Type"
 #define DET_XML_TAG_VENDOR "DETVendorParams"
 
-//XML Tags for XMLDomGenerator
-//#define DET_XML_TAG_FILE "File"
-
-
-//Common Static Methods
-
-static __int64 myGetFileSize(HANDLE hf)
-{
-	LARGE_INTEGER li;
-	DWORD high;
-
-	li.LowPart = GetFileSize(hf, &high);
-	li.HighPart = high;
-
-	return li.QuadPart;
-}
-
 static void FormatW32ErrorMessage(DWORD err, CString& sError)
 {
 	LPTSTR lpMsgBuf;
@@ -134,5 +122,3 @@ static void FormatW32ErrorMessage(DWORD err, CString& sError)
 		::LocalFree(lpMsgBuf);
 	}
 }
-
-

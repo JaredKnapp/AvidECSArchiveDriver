@@ -45,6 +45,15 @@
     <ClCompile Include="XMLDomGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DETActionPull.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DETActionIterate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DETActionRemove.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AvidECSArchiveDriver.h">
@@ -93,6 +102,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XMLDomGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DETActionPull.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DETActionIterate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DETActionRemove.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
