@@ -28,19 +28,19 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 					DETActionData::FileStruct& fileElement = m_Data.m_FileStructList[index];
 
 					CString sArchiveDir = BuildArchiveDir(fileElement.MetadataID);
-					CString sArchiveFullPath = CreatePath(sArchiveDir, fileElement.FileName);
+					CString sArchiveFullPath = BuildArchiveFullPath(sArchiveDir, fileElement.FileName);
 
-					CECSConnection::S3_ERROR Error = m_ECSConnection.DeleteS3(sArchiveFullPath);
-					if (Error.IfError())
-					{
-						FILE_LOG(logERROR) << "DETActionRemove::Action(): " << "Failed to delete file - " << Error.Format();
-						Error = Av::DETEx::keInternalError;
-						fileElement.transferSuccess = FALSE;
-					}
-					else
-					{
-						fileElement.transferSuccess = TRUE;
-					}
+					//CECSConnection::S3_ERROR Error = m_ECSConnection.DeleteS3(sArchiveFullPath);
+					//if (Error.IfError())
+					//{
+					//	FILE_LOG(logERROR) << "DETActionRemove::Action(): " << "Failed to delete file - " << Error.Format();
+					//	Error = Av::DETEx::keInternalError;
+					//	fileElement.transferSuccess = FALSE;
+					//}
+					//else
+					//{
+					//	fileElement.transferSuccess = TRUE;
+					//}
 				}
 
 				StoreCookieXML();

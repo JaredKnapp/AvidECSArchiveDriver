@@ -26,8 +26,8 @@ protected:
 	void SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize = 0, Av::DETEx::eErrorType ErrType = Av::DETEx::ketSuccess);
 	bool DETAction::CreateDirectories(CString sDirectoryPath);
 	CString BuildArchiveDir(CString sMetadataId);
+	CString BuildArchiveFullPath(CString sArchiveDir, CString sSourceFullPath);
 	CString ParsePath(CString sFullPath);
-	CString CreatePath(CString sSourceFullPath, CString sDestPath);
 	void StoreCookieXML();
 	
 	CECSConnection m_ECSConnection;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "ECSConnection.h"
+//#include "ECSConnection.h"
 #include "FileSupport.h"
 
 #include "DETActionPush.h"
@@ -26,7 +26,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 
 	DETActionData::FileStruct& fileElement = m_Data.m_FileStructList[index];
 	CString sArchiveDir = BuildArchiveDir(fileElement.MetadataID);
-	CString sDestFullPath = CreatePath(sArchiveDir, fileElement.FileName);
+	CString sDestFullPath = BuildArchiveFullPath(sArchiveDir, fileElement.FileName);
 
 	//Push to ECS
 	CHandle hFile(CreateFile(fileElement.FileName, FILE_GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr));
@@ -62,12 +62,15 @@ bool DETActionPush::TransferFile(unsigned long index)
 			&Context,				// context for ShutdownParamCB and UpdateProgressCB
 			Error);					// returned error
 
+		if (!isOK) {
+			FILE_LOG(logERROR) << "DETActionPush: Error Pushing to ECS: " << Error.Format();
+		}
 	}
 	else
 	{
-		//TODO: error message
+		FILE_LOG(logERROR) << _T("DETActionPush: Error Opening file to Push to ECS: (") << fileElement.FileName << L")";
 	}
 
-	if ( isOK ) fileElement.transferSuccess = true;
+	fileElement.transferSuccess = isOK;
 	return isOK;
 }

@@ -560,19 +560,19 @@ CString DETAction::ParsePath(CString sFullPath)
 	return sPath;
 }
 
-CString DETAction::CreatePath(CString sArchiveDir, CString sSourceFullPath)
+CString DETAction::BuildArchiveFullPath(CString sArchiveDir, CString sSourceFullPath)
 {
-	CString sFullPathFormatted;
-	CString sDestFullPath;
+	CString sFullPathFormatted = L"";
+	CString sDestFullPath = L"";
 
-	wchar_t lpSep = (sSourceFullPath.ReverseFind('\\') > 0) ? '\\' : '/';
+	char sSep = (sSourceFullPath.ReverseFind('\\') > 0) ? '\\' : '/';
 
 	//Extract the filename from the source FullPath
-	sFullPathFormatted.Format(L"%s%s", lpSep, sSourceFullPath);
-	CString sFileName = sFullPathFormatted.Mid(sFullPathFormatted.ReverseFind(lpSep) + 1);
+	sFullPathFormatted.Format(L"/%s", sSourceFullPath);
+	CString sFileName = sFullPathFormatted.Mid(sFullPathFormatted.ReverseFind(sSep) + 1);
 
 	//Combine the DestPath, with the filename
-	sDestFullPath.Format(L"%s/%s", sArchiveDir, sFileName);
+	sDestFullPath.Format(L"%s%s", sArchiveDir, sFileName);
 
 	return sDestFullPath;
 }
