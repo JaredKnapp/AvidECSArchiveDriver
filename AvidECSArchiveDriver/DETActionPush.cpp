@@ -17,7 +17,7 @@ static void ProgressCallBack(int iProgress, void *pContext)
 {
 	PROGRESS_CONTEXT *pProg = (PROGRESS_CONTEXT *)pContext;
 	pProg->ullOffset += iProgress;
-	_tprintf(L"%s: %-20I64d\r", (LPCTSTR)pProg->sTitle, pProg->ullOffset);
+	//_tprintf(L"%s: %-20I64d\r", (LPCTSTR)pProg->sTitle, pProg->ullOffset);
 }
 
 bool DETActionPush::TransferFile(unsigned long index)
@@ -29,11 +29,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 	CString sDestFullPath = CreatePath(sArchiveDir, fileElement.FileName);
 
 	//Push to ECS
-	//DETAction::CreateDirectories(DestDir);
-	//tmp = DETAction::TransferFile(srcFilePath, DestPath, fileElement.FileSize);
-
 	CHandle hFile(CreateFile(fileElement.FileName, FILE_GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr));
-
 	LARGE_INTEGER liFileSize;
 	if (GetFileSizeEx(hFile, &liFileSize))
 	{
@@ -55,7 +51,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 			sDestFullPath,			// path to object in format: /bucket/dir1/dir2/object
 			hFile,					// open handle to file
 			liFileSize.QuadPart,	// size of the file
-			MEGABYTES(1),			// size of buffer to use
+			m_Data.m_lBlockSize,	// size of buffer to use
 			10,						// part size (in MB)
 			3,						// maxiumum number of threads to spawn
 			true,					// if set, include content-MD5 header
@@ -66,6 +62,10 @@ bool DETActionPush::TransferFile(unsigned long index)
 			&Context,				// context for ShutdownParamCB and UpdateProgressCB
 			Error);					// returned error
 
+	}
+	else
+	{
+		//TODO: error message
 	}
 
 	if ( isOK ) fileElement.transferSuccess = true;

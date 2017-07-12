@@ -209,7 +209,6 @@ void XMLDomParser::parseSession(DOMNode * root) {
 
 void XMLDomParser::parseVendor(DOMNode * root) {
 	CString sBlockMoveSizeStr = getSingleNodeValue(root, DET_XML_TAG_BLOCKMOVESIZE);
-	CString sDestination = getSingleNodeValue(root, DET_XML_TAG_DESTINATION);
 	CString sS3Url = getSingleNodeValue(root, DET_XML_TAG_S3URL);
 	CString sS3Port = getSingleNodeValue(root, DET_XML_TAG_S3PORT);
 	CString sS3User = getSingleNodeValue(root, DET_XML_TAG_S3USER);
@@ -217,7 +216,6 @@ void XMLDomParser::parseVendor(DOMNode * root) {
 	CString sS3Bucket = getSingleNodeValue(root, DET_XML_TAG_S3BUCKET);
 
 	m_Data.m_lBlockSize = _wtol(sBlockMoveSizeStr);
-	m_Data.m_sDestination = sDestination;
 	m_Data.m_sS3Url = sS3Url;
 	m_Data.m_wS3Port = (WORD)_tcstoul(sS3Port, NULL, 10);
 	m_Data.m_sS3User = sS3User;

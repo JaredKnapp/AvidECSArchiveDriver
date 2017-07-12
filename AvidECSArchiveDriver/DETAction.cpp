@@ -2,7 +2,6 @@
 
 #include "Messages.h"
 #include "DETState.h"
-//#include "NTERRTXT.H"
 #include "XMLDomGenerator.h"
 #include "XMLDomParser.h"
 #include "DETAction.h"
@@ -31,7 +30,7 @@ DETAction::DETAction() :
 	m_hndActionThread(NULL),
 	m_CntFilesXfer(0),
 	m_iBytesXferred(0),
-	m_iTotalBytesToXfer(0)
+	m_iBytesToXfer(0)
 {
 	m_CriticalSection.Enter();
 
@@ -152,7 +151,7 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 		{
 			XMLDomParser xmlParser(m_Data, lpXML);
 			if (xmlParser.parse()) {
-				m_iTotalBytesToXfer = CalculateTransferSize();
+				m_iBytesToXfer = CalculateTransferSize();
 
 				//Okay to perform send and create the thread
 				if (m_hndActionThread == NULL)
@@ -458,7 +457,7 @@ void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx:
 	m_Status.Code = Code;
 	m_Status.ErrorType = ErrType;
 	m_Status.State = m_pState->GetState();
-	m_Status.TotalKBytesToXfer = m_iTotalBytesToXfer;
+	m_Status.TotalKBytesToXfer = m_iBytesToXfer;
 
 	if (FileSize != 0)
 	{
@@ -467,11 +466,11 @@ void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx:
 	}
 
 	//Infosys - If there is nothing to transfer, percentage is always 100. Added the else if part
-	if (m_iTotalBytesToXfer > 0)
+	if (m_iBytesToXfer > 0)
 	{
-		m_Status.PercentXferComplete = (int)(m_Status.KBytesXferred * 100 / m_iTotalBytesToXfer);
+		m_Status.PercentXferComplete = (int)(m_Status.KBytesXferred * 100 / m_iBytesToXfer);
 	}
-	else if (m_iTotalBytesToXfer == 0)
+	else if (m_iBytesToXfer == 0)
 	{
 		m_Status.PercentXferComplete = 100;
 	}

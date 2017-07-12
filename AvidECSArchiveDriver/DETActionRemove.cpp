@@ -21,7 +21,6 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 				FILE_LOG(logDEBUG) << "DETActionRemove::Action 1";
 
 				int iNumElements = (int)m_Data.m_FileStructList.size();
-				m_iTotalBytesToXfer = 0;
 				DWORD remainder = 0;
 
 				for (int index = 0; index < iNumElements; index++)

@@ -77,7 +77,6 @@ const int FM_EXITTHREAD = (DET_CODE | 0x0002);
 //XML Tags for XMLDomParser
 #define DET_XML_TAG_ARCHIVE_ID "ArchiveID"
 #define DET_XML_TAG_BLOCKMOVESIZE "BlockMoveSize"
-#define DET_XML_TAG_DESTINATION "StoragePath"
 #define DET_XML_TAG_DET "DET"
 #define DET_XML_TAG_ENDOFFSET "EndOffset"
 #define DET_XML_TAG_FILE "File"
