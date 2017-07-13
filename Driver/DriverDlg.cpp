@@ -355,7 +355,7 @@ void CDriverDlg::OnBnClickedOpen1()
 		ret = Av::DETEx::keMissingFile;
 	}
 	 
-	tmp.Format(_T("%s. Version: %d"), retrieveErrorString(ret), version);
+	tmp.Format(_T("%s. Version: %#x"), retrieveErrorString(ret), version);
 	m_Edit1.SetWindowText(tmp);
 	UpdateData();
 }

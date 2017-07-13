@@ -20,6 +20,19 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 			{
 				FILE_LOG(logDEBUG) << "DETActionRemove::Action 1";
 
+				//Establish ECS Connection
+				bool isSSL = (m_Data.m_wS3Port == 9021 || m_Data.m_wS3Port == 443);
+
+				deque<CString> IPList;
+				IPList.push_back(m_Data.m_sS3Url);
+				m_ECSConnection.SetIPList(IPList);
+				m_ECSConnection.SetS3KeyID(m_Data.m_sS3User);
+				m_ECSConnection.SetSecret(m_Data.m_sS3Secret);
+				m_ECSConnection.SetSSL(isSSL);
+				m_ECSConnection.SetPort(m_Data.m_wS3Port);
+				m_ECSConnection.SetHost(_T("ECS S3 API"));
+				m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
+
 				int iNumElements = (int)m_Data.m_FileStructList.size();
 				DWORD remainder = 0;
 
@@ -30,17 +43,17 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 					CString sArchiveDir = BuildArchiveDir(fileElement.MetadataID);
 					CString sArchiveFullPath = BuildArchiveFullPath(sArchiveDir, fileElement.FileName);
 
-					//CECSConnection::S3_ERROR Error = m_ECSConnection.DeleteS3(sArchiveFullPath);
-					//if (Error.IfError())
-					//{
-					//	FILE_LOG(logERROR) << "DETActionRemove::Action(): " << "Failed to delete file - " << Error.Format();
-					//	Error = Av::DETEx::keInternalError;
-					//	fileElement.transferSuccess = FALSE;
-					//}
-					//else
-					//{
-					//	fileElement.transferSuccess = TRUE;
-					//}
+					CECSConnection::S3_ERROR Error = m_ECSConnection.DeleteS3(sArchiveFullPath);
+					if (Error.IfError())
+					{
+						FILE_LOG(logERROR) << "DETActionRemove::Action(): " << "Failed to delete file - " << Error.Format();
+						Error = Av::DETEx::keInternalError;
+						fileElement.transferSuccess = FALSE;
+					}
+					else
+					{
+						fileElement.transferSuccess = TRUE;
+					}
 				}
 
 				StoreCookieXML();

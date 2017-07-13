@@ -10,21 +10,6 @@
 CriticalSection DETAction::m_CriticalSection;
 bool m_bShuttingDown = false;
 
-
-int LastIndexOf(const CString& s1, const CString& s2)
-{
-	int found = -1;
-	int next_pos = 0;
-	for (;;)
-	{
-		next_pos = s1.Find(s2, next_pos);
-		if (next_pos == -1)
-			return found;
-
-		found = next_pos;
-	};
-}
-
 DETAction::DETAction() :
 	m_pState(NULL),
 	m_hndActionThread(NULL),
@@ -32,6 +17,8 @@ DETAction::DETAction() :
 	m_iBytesXferred(0),
 	m_iBytesToXfer(0)
 {
+	FILE_LOG(logDEBUG) << "DETAction: Construction";
+
 	m_CriticalSection.Enter();
 
 	m_Status.Code = Av::DETEx::keNoError;
@@ -52,7 +39,6 @@ DETAction::DETAction() :
 	catch (...)
 	{
 		FILE_LOG(logERROR) << sUnknownException;
-
 		m_sLastError = sUnknownException;
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
@@ -67,38 +53,27 @@ DETAction::~DETAction() {
 	}
 }
 
+//Called from ActionThread, launched in Action() method
 unsigned int DETAction::TransferFiles(void * pDETAction)
 {
-	FILE_LOG(logDEBUG) << "DETAction:TransferFile - YOU ARE HERE!!!";
+	FILE_LOG(logDEBUG) << "DETAction:TransferFiles(DETAction) - entering";
 
 	CString sError;
 	DWORD dwErrorCode = 0;
 	DETAction *pAction = static_cast<DETAction*>(pDETAction);
 	Av::DETEx::eError Error = Av::DETEx::keNoError;
 
-	//Establish ECS Connection
-	bool isSSL = (pAction->m_Data.m_wS3Port == 9021 || pAction->m_Data.m_wS3Port == 443);
-
-	deque<CString> IPList;
-	IPList.push_back(pAction->m_Data.m_sS3Url);
-	pAction->m_ECSConnection.SetIPList(IPList);
-	pAction->m_ECSConnection.SetS3KeyID(pAction->m_Data.m_sS3User);
-	pAction->m_ECSConnection.SetSecret(pAction->m_Data.m_sS3Secret);
-	pAction->m_ECSConnection.SetSSL(isSSL);
-	pAction->m_ECSConnection.SetPort(pAction->m_Data.m_wS3Port);
-	pAction->m_ECSConnection.SetHost(_T("ECS S3 API"));
-	pAction->m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
-
 	//retrieve the number of files to be moved
 	long NumElementsToMove = (long)pAction->m_Data.m_FileStructList.size();
-	long i = 0;
-	for (; i < NumElementsToMove; i++)
+	long index = 0;
+	for (; index < NumElementsToMove; index++)
 	{
 		try
 		{
 			if (pAction->m_pState->IsValid(vrskrsRun))
 			{
-				if (!pAction->TransferFile(i))
+				//.TransferFile method should be implemented in object served up by the DETActionFactory
+				if (!pAction->TransferFile(index))
 				{
 					pAction->m_pState->SetState(vrsNone);
 					FILE_LOG(logERROR) << "DETAction:TransferFiles(...) - " << "Failed to transfer file and setting state to vrsNone";
@@ -118,7 +93,7 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 		}
 	}
 
-	if (i >= NumElementsToMove)
+	if (index >= NumElementsToMove)
 	{
 		pAction->m_sLastError = sTransferSuccessMsg;
 		pAction->StoreCookieXML();
@@ -151,6 +126,20 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 		{
 			XMLDomParser xmlParser(m_Data, lpXML);
 			if (xmlParser.parse()) {
+
+				//Establish ECS Connection
+				bool isSSL = (m_Data.m_wS3Port == 9021 || m_Data.m_wS3Port == 443);
+
+				deque<CString> IPList;
+				IPList.push_back(m_Data.m_sS3Url);
+				m_ECSConnection.SetIPList(IPList);
+				m_ECSConnection.SetS3KeyID(m_Data.m_sS3User);
+				m_ECSConnection.SetSecret(m_Data.m_sS3Secret);
+				m_ECSConnection.SetSSL(isSSL);
+				m_ECSConnection.SetPort(m_Data.m_wS3Port);
+				m_ECSConnection.SetHost(_T("ECS S3 API"));
+				m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
+
 				m_iBytesToXfer = CalculateTransferSize();
 
 				//Okay to perform send and create the thread

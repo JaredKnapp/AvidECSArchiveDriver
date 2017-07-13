@@ -75,13 +75,13 @@ bool DETActionPull::TransferFile(unsigned long index)
 			CHandle hFile(CreateFile(sDestFullPath, FILE_GENERIC_READ | FILE_GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr));
 			if (hFile.m_h != INVALID_HANDLE_VALUE)
 			{
-				//CECSConnection::S3_ERROR Error = S3Read(m_ECSConnection, sSourceFullPath, hFile, ProgressCallBack, &Context);
-				//if (Error.IfError())
-				//{
-				//	FILE_LOG(logERROR) << L"DETActionPull::TransferFile(): " << L"Error from S3Read (" << Error.Format() << L")";
-				//	fileElement.transferSuccess = false;
-				//	isOK = false;
-				//}
+				CECSConnection::S3_ERROR Error = S3Read(m_ECSConnection, sSourceFullPath, hFile, ProgressCallBack, &Context);
+				if (Error.IfError())
+				{
+					FILE_LOG(logERROR) << L"DETActionPull::TransferFile(): " << L"Error from S3Read (" << Error.Format() << L")";
+					fileElement.transferSuccess = false;
+					isOK = false;
+				}
 			}
 			else
 			{
