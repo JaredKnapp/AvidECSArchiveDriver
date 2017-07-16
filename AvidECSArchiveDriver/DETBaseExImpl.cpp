@@ -12,7 +12,7 @@
 *****************************/
 DETEXPORT Av::DETEx::DETBaseEx *DETBaseExCreate()
 {
-	FILE_LOG(logDEBUG) << "Calling DETBaseEx: DETEXPORT DETBaseExCreate() - Starting";
+	LOG_DEBUG << "Calling DETBaseEx: DETEXPORT DETBaseExCreate() - Starting";
 
 	try
 	{
@@ -20,7 +20,7 @@ DETEXPORT Av::DETEx::DETBaseEx *DETBaseExCreate()
 	}
 	catch (...)
 	{
-		FILE_LOG(logERROR) << sUnknownException;
+		LOG_ERROR << sUnknownException;
 	}
 
 	return NULL;
@@ -41,14 +41,14 @@ DETBaseExImpl::~DETBaseExImpl()
 
 Av::DETEx::eError DETBaseExImpl::VersionEx(long * pwVersion)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::VersionEx(" << pwVersion << ")";
+	LOG_DEBUG << "Calling: DETBaseExImpl::VersionEx(" << pwVersion << ")";
 	*pwVersion = 0x00010002;
 	return Av::DETEx::keNoError;
 }
 
 Av::DETEx::eError DETBaseExImpl::OpenEx(Av::DETEx::ActionType type)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::OpenEx(" << type << ")";
+	LOG_DEBUG << "Calling: DETBaseExImpl::OpenEx(" << type << ")";
 	Av::DETEx::eError retVal = Av::DETEx::keNoError;
 
 	m_pDETAction = DETActionFactory::create(type);
@@ -60,7 +60,7 @@ Av::DETEx::eError DETBaseExImpl::OpenEx(Av::DETEx::ActionType type)
 
 Av::DETEx::eError DETBaseExImpl::ActionEx(const char * lpXML)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::ActionEx(" << lpXML << ")";
+	LOG_DEBUG << "Calling: DETBaseExImpl::ActionEx(" << lpXML << ")";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->Action(lpXML);
@@ -71,7 +71,7 @@ Av::DETEx::eError DETBaseExImpl::ActionEx(const char * lpXML)
 
 Av::DETEx::eError DETBaseExImpl::CloseEx()
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::CloseEx()";
+	LOG_DEBUG << "Calling: DETBaseExImpl::CloseEx()";
 	if (m_pDETAction != NULL)
 	{
 		delete m_pDETAction;
@@ -84,7 +84,7 @@ Av::DETEx::eError DETBaseExImpl::CloseEx()
 
 Av::DETEx::eError DETBaseExImpl::GetResultEx(char * lpBuffer, unsigned long * nSize)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetResultEx()"; // << lpBuffer << "," << nSize << ")";
+	LOG_DEBUG << "Calling: DETBaseExImpl::GetResultEx()"; // << lpBuffer << "," << nSize << ")";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->GetResult(lpBuffer, nSize);
@@ -95,7 +95,7 @@ Av::DETEx::eError DETBaseExImpl::GetResultEx(char * lpBuffer, unsigned long * nS
 
 Av::DETEx::eError DETBaseExImpl::GetLastErrorEx(char * lpBuffer, unsigned long * nSize)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetLastErrorEx()"; // << lpBuffer << "," << nSize << ")";
+	LOG_DEBUG << "Calling: DETBaseExImpl::GetLastErrorEx()"; // << lpBuffer << "," << nSize << ")";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->GetError(lpBuffer, nSize);
@@ -106,7 +106,7 @@ Av::DETEx::eError DETBaseExImpl::GetLastErrorEx(char * lpBuffer, unsigned long *
 
 Av::DETEx::eError DETBaseExImpl::GetStatusEx(Av::DETEx::Status * stat)
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::GetStatusEx(" << stat << ")";
+	LOG_DEBUG << "Calling: DETBaseExImpl::GetStatusEx(" << stat << ")";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->GetStatus(stat);
@@ -117,7 +117,7 @@ Av::DETEx::eError DETBaseExImpl::GetStatusEx(Av::DETEx::Status * stat)
 
 Av::DETEx::eError DETBaseExImpl::PauseEx()
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::PauseEx()";
+	LOG_DEBUG << "Calling: DETBaseExImpl::PauseEx()";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->Pause();
@@ -128,7 +128,7 @@ Av::DETEx::eError DETBaseExImpl::PauseEx()
 
 Av::DETEx::eError DETBaseExImpl::ResumeEx()
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::ResumeEx()";
+	LOG_DEBUG << "Calling: DETBaseExImpl::ResumeEx()";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->Resume();
@@ -139,7 +139,7 @@ Av::DETEx::eError DETBaseExImpl::ResumeEx()
 
 Av::DETEx::eError DETBaseExImpl::CancelEx()
 {
-	FILE_LOG(logDEBUG) << "Calling: DETBaseExImpl::CancelEx()";
+	LOG_DEBUG << "Calling: DETBaseExImpl::CancelEx()";
 	if (m_pDETAction != NULL)
 	{
 		return m_pDETAction->Cancel();

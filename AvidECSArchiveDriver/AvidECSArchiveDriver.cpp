@@ -15,26 +15,63 @@
 BEGIN_MESSAGE_MAP(CAvidECSArchiveDriverApp, CWinApp)
 END_MESSAGE_MAP()
 
+
+
+CStringW thisDllDirPath()
+{
+	CStringW thisPath = L"";
+	WCHAR path[MAX_PATH];
+	HMODULE hm;
+	if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+		GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+		(LPWSTR)&thisDllDirPath, &hm))
+	{
+		GetModuleFileNameW(hm, path, sizeof(path));
+		PathRemoveFileSpecW(path);
+		thisPath = CStringW(path);
+		if (!thisPath.IsEmpty() &&
+			thisPath.GetAt(thisPath.GetLength() - 1) != '\\')
+			thisPath += L"\\";
+	}
+
+	return thisPath;
+}
+
+WCHAR * GetThisDllPath()
+{
+	CStringW thisPath = L"";
+	WCHAR path[MAX_PATH];
+	HMODULE hm;
+	if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+		GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+		(LPWSTR)&thisDllDirPath, &hm))
+	{
+		GetModuleFileNameW(hm, path, sizeof(path));
+		PathRemoveFileSpecW(path);
+		thisPath = CStringW(path);
+		if (!thisPath.IsEmpty() &&
+			thisPath.GetAt(thisPath.GetLength() - 1) != '\\')
+			thisPath += L"\\";
+	}
+
+	return path;
+}
+
+
+
 // CAvidECSArchiveDriverApp construction
 CAvidECSArchiveDriverApp::CAvidECSArchiveDriverApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 
-	//ENable Logging
-	FILE* pFile = fopen(LOGFILENAME, "a");
-	Output2FILE::Stream() = pFile;
-	FILELog::ReportingLevel() = FILELog::FromString("DEBUG");
+	//Logging: https://github.com/SergiusTheBest/plog
+	plog::init(plog::verbose, LOGFILENAME, 1000000, 5);
 
 	//Open ECS Connector
-	FILE_LOG(logDEBUG) << "About to init ECS: " << "(v1.6b)";
 	CECSConnection::Init();
-	FILE_LOG(logDEBUG) << "ECS Init Complete";
-
-	//Initialize the XML DOM Parser
-	//XMLDomParser::Initialize();
-
-	FILE_LOG(logDEBUG) << "App Initialized";
+	LOG_DEBUG << "Current Filepath = " << GetThisDllPath();
+	LOG_DEBUG << "App Initialized";
 }
 
 // The one and only CAvidECSArchiveDriverApp object

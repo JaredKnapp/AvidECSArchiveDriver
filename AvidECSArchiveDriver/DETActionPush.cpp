@@ -43,7 +43,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 		MD_Rec.sData = fileElement.FileName;
 		MDList.push_back(MD_Rec);
 
-		CECSConnection::S3_ERROR Error;
+		CECSConnection::S3_ERROR s3Error;
 
 		isOK = DoS3MultiPartUpload(
 			m_ECSConnection,		// established connection to ECS
@@ -60,15 +60,15 @@ bool DETActionPush::TransferFile(unsigned long index)
 			5,						// how many times to retry a part before giving up
 			ProgressCallBack,		// optional progress callback
 			&Context,				// context for ShutdownParamCB and UpdateProgressCB
-			Error);					// returned error
+			s3Error);				// returned error
 
 		if (!isOK) {
-			FILE_LOG(logERROR) << "DETActionPush: Error Pushing to ECS: " << Error.Format();
+			LOG_ERROR << "DETActionPush: Error Pushing to ECS: " << s3Error.Format();
 		}
 	}
 	else
 	{
-		FILE_LOG(logERROR) << _T("DETActionPush: Error Opening file to Push to ECS: (") << fileElement.FileName << L")";
+		LOG_ERROR << _T("DETActionPush: Error Opening file to Push to ECS: (") << fileElement.FileName << L")";
 	}
 
 	fileElement.transferSuccess = isOK;

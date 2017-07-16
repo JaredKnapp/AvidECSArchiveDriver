@@ -17,7 +17,7 @@ DETAction::DETAction() :
 	m_iBytesXferred(0),
 	m_iBytesToXfer(0)
 {
-	FILE_LOG(logDEBUG) << "DETAction: Construction";
+	LOG_DEBUG << "DETAction: Construction";
 
 	m_CriticalSection.Enter();
 
@@ -38,7 +38,7 @@ DETAction::DETAction() :
 	}
 	catch (...)
 	{
-		FILE_LOG(logERROR) << sUnknownException;
+		LOG_ERROR << sUnknownException;
 		m_sLastError = sUnknownException;
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
@@ -56,7 +56,7 @@ DETAction::~DETAction() {
 //Called from ActionThread, launched in Action() method
 unsigned int DETAction::TransferFiles(void * pDETAction)
 {
-	FILE_LOG(logDEBUG) << "DETAction:TransferFiles(DETAction) - entering";
+	LOG_DEBUG << "DETAction:TransferFiles(DETAction) - entering";
 
 	CString sError;
 	DWORD dwErrorCode = 0;
@@ -76,7 +76,7 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 				if (!pAction->TransferFile(index))
 				{
 					pAction->m_pState->SetState(vrsNone);
-					FILE_LOG(logERROR) << "DETAction:TransferFiles(...) - " << "Failed to transfer file and setting state to vrsNone";
+					LOG_ERROR << "DETAction:TransferFiles(...) - " << "Failed to transfer file and setting state to vrsNone";
 					pAction->m_hndActionThread = NULL;
 					ExitThread((DWORD)FM_EXITTHREAD);
 					break;
@@ -87,7 +87,7 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 		{
 			//log unknown exception from the wait on events
 			pAction->m_pState->SetState(vrsNone);
-			FILE_LOG(logERROR) << sUnknownException;
+			LOG_ERROR << sUnknownException;
 			pAction->m_hndActionThread = NULL;
 			ExitThread((DWORD)FM_EXITTHREAD);
 		}
@@ -103,7 +103,7 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 		if (!pAction->m_pState->SetState(vrsFinish))
 		{
 			//we were not able to change to the finish state
-			FILE_LOG(logERROR) << sStateNoChangeMsg;
+			LOG_ERROR << sStateNoChangeMsg;
 			Error = Av::DETEx::keInternalError;
 		}
 
@@ -149,14 +149,14 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 				}
 				else
 				{
-					FILE_LOG(logERROR) << sThreadExistsMsg;
+					LOG_ERROR << sThreadExistsMsg;
 					m_sLastError = sThreadExistsMsg;
 					SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 				}
 			}
 			else
 			{
-				FILE_LOG(logERROR) << sXMLParseError;
+				LOG_ERROR << sXMLParseError;
 				m_sLastError = sXMLParseError;
 				SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 			}
@@ -164,7 +164,7 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 	}
 	catch (...)
 	{
-		FILE_LOG(logERROR) << sUnknownException;
+		LOG_ERROR << sUnknownException;
 		Error = RollbackState(StateSet, sUnknownException);
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
@@ -207,7 +207,7 @@ Av::DETEx::eError DETAction::GetStatus(Av::DETEx::Status * stat)
 	m_CriticalSection.Enter();
 	m_Status.State = m_pState->GetState();
 	*stat = m_Status;
-	FILE_LOG(logDEBUG) << "GetStatus: m_Status, Code=" << m_Status.Code << ",ErrorType=" << m_Status.ErrorType << ",State=" << m_Status.State << ",TotalKBytesToXfer=" << m_Status.TotalKBytesToXfer << ",KBytesXferred=" << m_Status.KBytesXferred << ",PercentXferComplete=" << m_Status.PercentXferComplete << ")";
+	LOG_DEBUG << "GetStatus: m_Status, Code=" << m_Status.Code << ",ErrorType=" << m_Status.ErrorType << ",State=" << m_Status.State << ",TotalKBytesToXfer=" << m_Status.TotalKBytesToXfer << ",KBytesXferred=" << m_Status.KBytesXferred << ",PercentXferComplete=" << m_Status.PercentXferComplete << ")";
 	m_CriticalSection.Leave();
 	return Av::DETEx::keNoError;
 }
@@ -236,7 +236,7 @@ Av::DETEx::eError DETAction::Pause()
 			else
 			{
 				//log that the FM thread has been Suspended
-				FILE_LOG(logDEBUG) << sTransferSuspendedMsg << sStateChangeMsg;
+				LOG_DEBUG << sTransferSuspendedMsg << sStateChangeMsg;
 
 			}
 
@@ -245,7 +245,7 @@ Av::DETEx::eError DETAction::Pause()
 	}
 	catch (...)
 	{
-		FILE_LOG(logERROR) << sUnknownException;
+		LOG_ERROR << sUnknownException;
 		Error = RollbackState(StateSet, sUnknownException);
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
@@ -275,7 +275,7 @@ Av::DETEx::eError DETAction::Resume()
 			}
 			else
 			{
-				FILE_LOG(logDEBUG) << sTransferNotSuspendedMsg << sStateChangeMsg;
+				LOG_DEBUG << sTransferNotSuspendedMsg << sStateChangeMsg;
 			}
 
 			SetStatus(Error);
@@ -283,7 +283,7 @@ Av::DETEx::eError DETAction::Resume()
 	}
 	catch (...)
 	{
-		FILE_LOG(logERROR) << sUnknownException;
+		LOG_ERROR << sUnknownException;
 		Error = RollbackState(StateSet, sUnknownException);
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
@@ -306,7 +306,7 @@ Av::DETEx::eError DETAction::Cancel()
 		{
 			if (StateSet = m_pState->SetState(vrskrsCancel))
 			{
-				FILE_LOG(logDEBUG) << sStateChangeMsg;
+				LOG_DEBUG << sStateChangeMsg;
 			}
 			else
 			{
@@ -315,12 +315,12 @@ Av::DETEx::eError DETAction::Cancel()
 				if (CurDETState == Av::DETEx::krsCancel)
 				{
 					Error = Av::DETEx::keCancel;
-					FILE_LOG(logDEBUG) << sStateChangeMsg;
+					LOG_DEBUG << sStateChangeMsg;
 				}
 				else
 				{
 					Error = Av::DETEx::keIterationFinished;
-					FILE_LOG(logDEBUG) << sCurrentStateMsg << "Finished state";
+					LOG_DEBUG << sCurrentStateMsg << "Finished state";
 				}
 			}
 		}
@@ -336,14 +336,14 @@ Av::DETEx::eError DETAction::Cancel()
 			if (ResumeStatus != 0xFFFFFFFF)
 			{
 				//log that the FM thread has resumed
-				FILE_LOG(logDEBUG) << sTransferNotSuspendedMsg << sStateChangeMsg;
+				LOG_DEBUG << sTransferNotSuspendedMsg << sStateChangeMsg;
 			}
 		}
 		SetStatus(Error);
 	}
 	catch (...)
 	{
-		FILE_LOG(logDEBUG) << sUnknownException;
+		LOG_DEBUG << sUnknownException;
 		m_sLastError = sUnknownException;
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
@@ -356,16 +356,16 @@ Av::Int64 DETAction::CalculateTransferSize() {
 	Av::Int64 iBytesToXFer = 0;
 
 	int iNumElements = (int)m_Data.m_FileStructList.size();
-	FILE_LOG(logDEBUG) << "DETAction::Action: " << "Found " << iNumElements << " files to process";
+	LOG_DEBUG << "DETAction::Action: " << "Found " << iNumElements << " files to process";
 	for (int index = 0; index < iNumElements; index++)
 	{
 		DETActionData::FileStruct& FileElement = m_Data.m_FileStructList[index];
 		CString sType = m_Data.m_FileStructList[index].type;
-		FILE_LOG(logDEBUG) << "DETAction::Action: " << "Type=" << sType;
+		LOG_DEBUG << "DETAction::Action: " << "Type=" << sType;
 		if (sType.Compare(_T("WG4")) != 0)
 		{
 			CString sSourceFileName = m_Data.m_FileStructList[index].FileName;
-			FILE_LOG(logDEBUG) << "DETAction::Action: " << "SourceFilename=" << sSourceFileName;
+			LOG_DEBUG << "DETAction::Action: " << "SourceFilename=" << sSourceFileName;
 
 			//open file to get its handle, and then, get file size
 			HANDLE hFile = INVALID_HANDLE_VALUE;
@@ -401,7 +401,7 @@ Av::Int64 DETAction::CalculateTransferSize() {
 							FileElement.FileSize = liFileSize.QuadPart;
 						}
 					}
-					FILE_LOG(logDEBUG) << "DETAction::Action: SourceFile size=" << FileElement.FileSize;
+					LOG_DEBUG << "DETAction::Action: SourceFile size=" << FileElement.FileSize;
 					iBytesToXFer += FileElement.FileSize;
 					CloseHandle(hFile);
 					hFile = INVALID_HANDLE_VALUE;
@@ -439,7 +439,7 @@ Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg)
 
 void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx::eErrorType ErrType)
 {
-	FILE_LOG(logDEBUG) << "SetStatue(" << Code << ", " << FileSize << ", " << ErrType << ")";
+	LOG_DEBUG << "SetStatue(" << Code << ", " << FileSize << ", " << ErrType << ")";
 
 	m_CriticalSection.Enter();
 
@@ -466,7 +466,7 @@ void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx:
 
 	m_CriticalSection.Leave();
 
-	FILE_LOG(logDEBUG) << "m_Status, Code=" << m_Status.Code << ",ErrorType=" << m_Status.ErrorType << ",State=" << m_Status.State << ",TotalKBytesToXfer=" << m_Status.TotalKBytesToXfer << ",KBytesXferred=" << m_Status.KBytesXferred << ",PercentXferComplete=" << m_Status.PercentXferComplete << ")";
+	LOG_DEBUG << "m_Status, Code=" << m_Status.Code << ",ErrorType=" << m_Status.ErrorType << ",State=" << m_Status.State << ",TotalKBytesToXfer=" << m_Status.TotalKBytesToXfer << ",KBytesXferred=" << m_Status.KBytesXferred << ",PercentXferComplete=" << m_Status.PercentXferComplete << ")";
 }
 
 void DETAction::StoreCookieXML()
@@ -477,7 +477,7 @@ void DETAction::StoreCookieXML()
 
 bool DETAction::CreateDirectories(CString sDirectoryPath)
 {
-	FILE_LOG(logDEBUG) << "DETAction::CreateDirectories(" << sDirectoryPath << ")";
+	LOG_DEBUG << "DETAction::CreateDirectories(" << sDirectoryPath << ")";
 	CString sDirectoryToCreate = sDirectoryPath;
 	std::string::size_type pos = 0, slash_pos = 0, tmp_pos = 0;
 	BOOL bResult = TRUE;
@@ -514,7 +514,7 @@ bool DETAction::CreateDirectories(CString sDirectoryPath)
 			if ((DWORD)-1 == GetFileAttributes(sDirectoryToCreate))
 			{
 				bResult = CreateDirectory(sDirectoryToCreate, NULL);
-				FILE_LOG(logDEBUG) << "DETAction::CreateDirectory(" << sDirectoryToCreate << "), Result=" << bResult;
+				LOG_DEBUG << "DETAction::CreateDirectory(" << sDirectoryToCreate << "), Result=" << bResult;
 			}
 			else
 			{
@@ -526,7 +526,7 @@ bool DETAction::CreateDirectories(CString sDirectoryPath)
 		else
 		{
 			bResult = CreateDirectory(sDirectoryPath, NULL); // todo: rework this function not to attempt to create directories that already exist.
-			FILE_LOG(logDEBUG) << "DETAction::CreateDirectory(" << sDirectoryPath << "), Result=" << bResult;
+			LOG_DEBUG << "DETAction::CreateDirectory(" << sDirectoryPath << "), Result=" << bResult;
 			isFinished = true;
 		}
 	} while (!isFinished && (bResult || ((ulErrCode = GetLastError()) == ERROR_ALREADY_EXISTS)));

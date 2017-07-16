@@ -8,7 +8,7 @@
 Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 {
 	Av::DETEx::eError Error = Av::DETEx::keNoError;
-	FILE_LOG(logDEBUG) << "DETActionRemove::Action(xml)";
+	LOG_DEBUG << "DETActionRemove::Action(xml)";
 
 	try
 	{
@@ -16,9 +16,9 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 
 		if (parser.parse())
 		{
-			if (!m_pState->SetState(vrskrsRun))
+			if (m_pState->SetState(vrskrsRun))
 			{
-				FILE_LOG(logDEBUG) << "DETActionRemove::Action 1";
+				LOG_DEBUG << "DETActionRemove::Action 1";
 
 				//Establish ECS Connection
 				bool isSSL = (m_Data.m_wS3Port == 9021 || m_Data.m_wS3Port == 443);
@@ -43,10 +43,10 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 					CString sArchiveDir = BuildArchiveDir(fileElement.MetadataID);
 					CString sArchiveFullPath = BuildArchiveFullPath(sArchiveDir, fileElement.FileName);
 
-					CECSConnection::S3_ERROR Error = m_ECSConnection.DeleteS3(sArchiveFullPath);
-					if (Error.IfError())
+					CECSConnection::S3_ERROR s3Error = m_ECSConnection.DeleteS3(sArchiveFullPath);
+					if (s3Error.IfError())
 					{
-						FILE_LOG(logERROR) << "DETActionRemove::Action(): " << "Failed to delete file - " << Error.Format();
+						LOG_ERROR << "DETActionRemove::Action(): " << "Failed to delete file - " << s3Error .Format();
 						Error = Av::DETEx::keInternalError;
 						fileElement.transferSuccess = FALSE;
 					}
@@ -74,7 +74,7 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 	}
 	catch (...)
 	{
-		FILE_LOG(logERROR) << "DETActionRemove::Action() " << sUnknownException;
+		LOG_ERROR << "DETActionRemove::Action() " << sUnknownException;
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
 	return Error;

@@ -75,18 +75,22 @@ bool DETActionPull::TransferFile(unsigned long index)
 			CHandle hFile(CreateFile(sDestFullPath, FILE_GENERIC_READ | FILE_GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr));
 			if (hFile.m_h != INVALID_HANDLE_VALUE)
 			{
-				CECSConnection::S3_ERROR Error = S3Read(m_ECSConnection, sSourceFullPath, hFile, ProgressCallBack, &Context);
-				if (Error.IfError())
+				CECSConnection::S3_ERROR s3Error = S3Read(m_ECSConnection, sSourceFullPath, hFile, ProgressCallBack, &Context);
+				if (s3Error.IfError())
 				{
-					FILE_LOG(logERROR) << L"DETActionPull::TransferFile(): " << L"Error from S3Read (" << Error.Format() << L")";
+					LOG_ERROR << L"DETActionPull::TransferFile(): " << L"Error from S3Read (" << s3Error.Format() << L")";
 					fileElement.transferSuccess = false;
 					isOK = false;
+				}
+				else {
+					fileElement.transferSuccess = true;
+					isOK = true;
 				}
 			}
 			else
 			{
 				//ERROR
-				FILE_LOG(logERROR) << L"DETActionPull::TransferFile(): " << L"Invalid File Handle (" << sDestFullPath << L")";
+				LOG_ERROR << L"DETActionPull::TransferFile(): " << L"Invalid File Handle (" << sDestFullPath << L")";
 				fileElement.transferSuccess = false;
 				isOK = false;
 			}
@@ -94,7 +98,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 	}
 	else
 	{
-		FILE_LOG(logERROR) << "Transferring WG4 is not supported!! tapename=" << fileElement.tapename << ",archiveid=" << fileElement.archiveID;
+		LOG_ERROR << "Transferring WG4 is not supported!! tapename=" << fileElement.tapename << ",archiveid=" << fileElement.archiveID;
 		fileElement.transferSuccess = false;
 		isOK = false;
 	}

@@ -49,4 +49,6 @@
 #include <string>
 
 #include "CommonDef.h"
-#include "Log.h"
+#include <plog/Log.h>
+//#include "Log.h"
+
