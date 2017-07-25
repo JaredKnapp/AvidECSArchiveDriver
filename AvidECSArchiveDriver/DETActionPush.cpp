@@ -39,36 +39,45 @@ bool DETActionPush::TransferFile(unsigned long index)
 		list<CECSConnection::S3_METADATA_ENTRY> MDList;
 
 		CECSConnection::S3_METADATA_ENTRY MD_Rec;
-		MD_Rec.sTag = _T("avid-sourcefilepath");
+		MD_Rec.sTag = L"avid-sourcefilepath";
 		MD_Rec.sData = fileElement.FileName;
 		MDList.push_back(MD_Rec);
 
-		CECSConnection::S3_ERROR s3Error;
+		try {
 
-		isOK = DoS3MultiPartUpload(
-			m_ECSConnection,		// established connection to ECS
-			fileElement.FileName,	// path to source file
-			sDestFullPath,			// path to object in format: /bucket/dir1/dir2/object
-			hFile,					// open handle to file
-			liFileSize.QuadPart,	// size of the file
-			m_Data.m_lBlockSize,	// size of buffer to use
-			10,						// part size (in MB)
-			3,						// maxiumum number of threads to spawn
-			true,					// if set, include content-MD5 header
-			&MDList,				// optional metadata to send to object
-			4,						// how big the queue can grow that feeds the upload thread
-			5,						// how many times to retry a part before giving up
-			ProgressCallBack,		// optional progress callback
-			&Context,				// context for ShutdownParamCB and UpdateProgressCB
-			s3Error);				// returned error
+			CECSConnection::S3_ERROR s3Error;
 
-		if (!isOK) {
-			LOG_ERROR << "DETActionPush: Error Pushing to ECS: " << s3Error.Format();
+			LOG_DEBUG << fileElement.FileName;
+			LOG_DEBUG << sDestFullPath;
+
+			isOK = DoS3MultiPartUpload(
+				m_ECSConnection,		// established connection to ECS
+				fileElement.FileName,	// path to source file
+				sDestFullPath,			// path to object in format: /bucket/dir1/dir2/object
+				hFile,					// open handle to file
+				liFileSize.QuadPart,	// size of the file
+				m_Data.m_lBlockSize,	// size of buffer to use
+				10,						// part size (in MB)
+				3,						// maxiumum number of threads to spawn
+				true,					// if set, include content-MD5 header
+				&MDList,				// optional metadata to send to object
+				4,						// how big the queue can grow that feeds the upload thread
+				5,						// how many times to retry a part before giving up
+				ProgressCallBack,		// optional progress callback
+				&Context,				// context for ShutdownParamCB and UpdateProgressCB
+				s3Error);				// returned error
+
+			if (!isOK) {
+				LOG_ERROR << L"Error Pushing to ECS: " << s3Error.Format() << L"-" << s3Error.sDetails;
+			}
+		}
+		catch (...) {
+			LOG_ERROR << "Caught Exception";
 		}
 	}
 	else
 	{
-		LOG_ERROR << _T("DETActionPush: Error Opening file to Push to ECS: (") << fileElement.FileName << L")";
+		LOG_ERROR << L"Error Opening file to Push to ECS: (" << fileElement.FileName << L")";
 	}
 
 	fileElement.transferSuccess = isOK;

@@ -176,7 +176,7 @@ void XMLDomParser::parseFileList(DOMNode * root)
 			CString archiveid = getSingleNodeValue(fileNode, DET_XML_TAG_ARCHIVE_ID);
 			CString tapename = getSingleNodeValue(fileNode, DET_XML_TAG_TAPE_NAME);
 
-			LOG_DEBUG << "XMLDomParser::parseFileList: " << "Files[" << i << "]=(" << archiveid << ", " << tapename << ")";
+			LOG_DEBUG << "Files[" << i << "]=(" << archiveid << ", " << tapename << ")";
 
 			FileInfo.archiveID = archiveid;
 			FileInfo.tapename = tapename;
@@ -188,7 +188,7 @@ void XMLDomParser::parseFileList(DOMNode * root)
 			CString fn = getSingleNodeValue(fileNode, DET_XML_TAG_FILENAME);
 			CString resolution = getSingleNodeValue(fileNode, DET_XML_TAG_RESOLUTION);
 
-			LOG_DEBUG << "XMLDomParser::parseFileList: " << "Files [" << i << "]=(" << id << ", " << fn << ", " << resolution << ")";
+			LOG_DEBUG << L"Files [" << i << L"]=(" << id << L", " << fn << L", " << resolution << L")";
 
 			FileInfo.FileName = fn;
 			FileInfo.MetadataID = id;
@@ -202,7 +202,7 @@ void XMLDomParser::parseFileList(DOMNode * root)
 
 void XMLDomParser::parseMetadata(DOMNode * root) {
 	CString sName = getSingleNodeValue(root, DET_XML_TAG_NAME);
-	LOG_DEBUG << "XMLDomParser::parseMetadata: Name of the job3 = " << sName;
+	LOG_DEBUG << L"Name of the job3 = " << sName;
 }
 
 void XMLDomParser::parseSession(DOMNode * root) {

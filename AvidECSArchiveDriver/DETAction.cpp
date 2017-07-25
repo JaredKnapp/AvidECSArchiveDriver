@@ -17,7 +17,7 @@ DETAction::DETAction() :
 	m_iBytesXferred(0),
 	m_iBytesToXfer(0)
 {
-	LOG_DEBUG << "DETAction: Construction";
+	LOG_DEBUG << "Constructor initialized";
 
 	m_CriticalSection.Enter();
 
@@ -56,7 +56,7 @@ DETAction::~DETAction() {
 //Called from ActionThread, launched in Action() method
 unsigned int DETAction::TransferFiles(void * pDETAction)
 {
-	LOG_DEBUG << "DETAction:TransferFiles(DETAction) - entering";
+	LOG_DEBUG << "entering";
 
 	CString sError;
 	DWORD dwErrorCode = 0;
@@ -76,7 +76,7 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 				if (!pAction->TransferFile(index))
 				{
 					pAction->m_pState->SetState(vrsNone);
-					LOG_ERROR << "DETAction:TransferFiles(...) - " << "Failed to transfer file and setting state to vrsNone";
+					LOG_ERROR << "Failed to transfer file and setting state to vrsNone";
 					pAction->m_hndActionThread = NULL;
 					ExitThread((DWORD)FM_EXITTHREAD);
 					break;
@@ -137,8 +137,8 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 				m_ECSConnection.SetSecret(m_Data.m_sS3Secret);
 				m_ECSConnection.SetSSL(isSSL);
 				m_ECSConnection.SetPort(m_Data.m_wS3Port);
-				m_ECSConnection.SetHost(_T("ECS S3 API"));
-				m_ECSConnection.SetUserAgent(_T("AvidEcsDriver/1.0"));
+				m_ECSConnection.SetHost(L"ECS S3 API");
+				m_ECSConnection.SetUserAgent(L"AvidEcsDriver/1.0");
 
 				m_iBytesToXfer = CalculateTransferSize();
 
@@ -356,16 +356,16 @@ Av::Int64 DETAction::CalculateTransferSize() {
 	Av::Int64 iBytesToXFer = 0;
 
 	int iNumElements = (int)m_Data.m_FileStructList.size();
-	LOG_DEBUG << "DETAction::Action: " << "Found " << iNumElements << " files to process";
+	LOG_DEBUG << L"Found " << iNumElements << L" files to process";
 	for (int index = 0; index < iNumElements; index++)
 	{
 		DETActionData::FileStruct& FileElement = m_Data.m_FileStructList[index];
 		CString sType = m_Data.m_FileStructList[index].type;
-		LOG_DEBUG << "DETAction::Action: " << "Type=" << sType;
-		if (sType.Compare(_T("WG4")) != 0)
+		LOG_DEBUG << L"Type=" << sType;
+		if (sType.Compare(L"WG4") != 0)
 		{
 			CString sSourceFileName = m_Data.m_FileStructList[index].FileName;
-			LOG_DEBUG << "DETAction::Action: " << "SourceFilename=" << sSourceFileName;
+			LOG_DEBUG << L"SourceFilename=" << sSourceFileName;
 
 			//open file to get its handle, and then, get file size
 			HANDLE hFile = INVALID_HANDLE_VALUE;
@@ -401,7 +401,7 @@ Av::Int64 DETAction::CalculateTransferSize() {
 							FileElement.FileSize = liFileSize.QuadPart;
 						}
 					}
-					LOG_DEBUG << "DETAction::Action: SourceFile size=" << FileElement.FileSize;
+					LOG_DEBUG << "SourceFile size=" << FileElement.FileSize;
 					iBytesToXFer += FileElement.FileSize;
 					CloseHandle(hFile);
 					hFile = INVALID_HANDLE_VALUE;
@@ -477,7 +477,7 @@ void DETAction::StoreCookieXML()
 
 bool DETAction::CreateDirectories(CString sDirectoryPath)
 {
-	LOG_DEBUG << "DETAction::CreateDirectories(" << sDirectoryPath << ")";
+	LOG_DEBUG << "CreateDirectories(" << sDirectoryPath << ")";
 	CString sDirectoryToCreate = sDirectoryPath;
 	std::string::size_type pos = 0, slash_pos = 0, tmp_pos = 0;
 	BOOL bResult = TRUE;
@@ -514,7 +514,7 @@ bool DETAction::CreateDirectories(CString sDirectoryPath)
 			if ((DWORD)-1 == GetFileAttributes(sDirectoryToCreate))
 			{
 				bResult = CreateDirectory(sDirectoryToCreate, NULL);
-				LOG_DEBUG << "DETAction::CreateDirectory(" << sDirectoryToCreate << "), Result=" << bResult;
+				LOG_DEBUG << "CreateDirectory(" << sDirectoryToCreate << "), Result=" << bResult;
 			}
 			else
 			{
@@ -526,7 +526,7 @@ bool DETAction::CreateDirectories(CString sDirectoryPath)
 		else
 		{
 			bResult = CreateDirectory(sDirectoryPath, NULL); // todo: rework this function not to attempt to create directories that already exist.
-			LOG_DEBUG << "DETAction::CreateDirectory(" << sDirectoryPath << "), Result=" << bResult;
+			LOG_DEBUG << "CreateDirectory(" << sDirectoryPath << "), Result=" << bResult;
 			isFinished = true;
 		}
 	} while (!isFinished && (bResult || ((ulErrCode = GetLastError()) == ERROR_ALREADY_EXISTS)));

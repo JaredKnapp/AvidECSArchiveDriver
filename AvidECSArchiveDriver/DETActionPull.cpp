@@ -78,7 +78,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 				CECSConnection::S3_ERROR s3Error = S3Read(m_ECSConnection, sSourceFullPath, hFile, ProgressCallBack, &Context);
 				if (s3Error.IfError())
 				{
-					LOG_ERROR << L"DETActionPull::TransferFile(): " << L"Error from S3Read (" << s3Error.Format() << L")";
+					LOG_ERROR << L"Error from S3Read (" << s3Error.Format() << L")";
 					fileElement.transferSuccess = false;
 					isOK = false;
 				}
@@ -90,7 +90,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 			else
 			{
 				//ERROR
-				LOG_ERROR << L"DETActionPull::TransferFile(): " << L"Invalid File Handle (" << sDestFullPath << L")";
+				LOG_ERROR << L"Invalid File Handle (" << sDestFullPath << L")";
 				fileElement.transferSuccess = false;
 				isOK = false;
 			}
