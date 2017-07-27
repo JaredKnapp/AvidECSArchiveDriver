@@ -1,8 +1,5 @@
 #include "stdafx.h"
-
-//#include "ECSConnection.h"
 #include "FileSupport.h"
-
 #include "DETActionPush.h"
 
 struct PROGRESS_CONTEXT
@@ -17,7 +14,8 @@ static void ProgressCallBack(int iProgress, void *pContext)
 {
 	PROGRESS_CONTEXT *pProg = (PROGRESS_CONTEXT *)pContext;
 	pProg->ullOffset += iProgress;
-	//_tprintf(L"%s: %-20I64d\r", (LPCTSTR)pProg->sTitle, pProg->ullOffset);
+	LOG_DEBUG << pProg->sTitle << L" ProgressCallback, " << pProg->ullOffset;
+//	SetStatus(Av::DETEx::keNoError, iProgress);
 }
 
 bool DETActionPush::TransferFile(unsigned long index)
@@ -45,31 +43,15 @@ bool DETActionPush::TransferFile(unsigned long index)
 
 		try {
 
-			CECSConnection::S3_ERROR s3Error;
-
-			LOG_DEBUG << fileElement.FileName;
-			LOG_DEBUG << sDestFullPath;
-
-			isOK = DoS3MultiPartUpload(
-				m_ECSConnection,		// established connection to ECS
-				fileElement.FileName,	// path to source file
-				sDestFullPath,			// path to object in format: /bucket/dir1/dir2/object
-				hFile,					// open handle to file
-				liFileSize.QuadPart,	// size of the file
-				m_Data.m_lBlockSize,	// size of buffer to use
-				10,						// part size (in MB)
-				3,						// maxiumum number of threads to spawn
-				true,					// if set, include content-MD5 header
-				&MDList,				// optional metadata to send to object
-				4,						// how big the queue can grow that feeds the upload thread
-				5,						// how many times to retry a part before giving up
-				ProgressCallBack,		// optional progress callback
-				&Context,				// context for ShutdownParamCB and UpdateProgressCB
-				s3Error);				// returned error
-
-			if (!isOK) {
-				LOG_ERROR << L"Error Pushing to ECS: " << s3Error.Format() << L"-" << s3Error.sDetails;
+			CECSConnection::S3_ERROR Error = S3Write(m_ECSConnection, sDestFullPath, hFile, m_Data.m_lBlockSize, true, 20, ProgressCallBack, &Context);
+			if (Error.IfError())
+			{
+				LOG_ERROR << L"S3Write - Error: " << (LPCTSTR)Error.Format();
 			}
+			else {
+				isOK = true;
+			}
+
 		}
 		catch (...) {
 			LOG_ERROR << "Caught Exception";

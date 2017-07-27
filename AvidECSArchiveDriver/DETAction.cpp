@@ -439,7 +439,7 @@ Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg)
 
 void DETAction::SetStatus(Av::DETEx::eError Code, Av::Int64 FileSize, Av::DETEx::eErrorType ErrType)
 {
-	LOG_DEBUG << "SetStatue(" << Code << ", " << FileSize << ", " << ErrType << ")";
+	LOG_DEBUG << "SetStatus(" << Code << ", " << FileSize << ", " << ErrType << ")";
 
 	m_CriticalSection.Enter();
 
