@@ -129,6 +129,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 					isOK = false;
 				}
 				else {
+					SetStatus(Av::DETEx::keNoError, Context.ullOffset);
 					fileElement.transferSuccess = true;
 					isOK = true;
 				}
@@ -144,7 +145,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 	}
 	else
 	{
-		LOG_ERROR << "Transferring WG4 is not supported!! tapename=" << fileElement.tapename << ",archiveid=" << fileElement.archiveID;
+		LOG_ERROR << L"Transferring WG4 is not supported!! tapename=" << fileElement.tapename << L",archiveid=" << fileElement.archiveID;
 		fileElement.transferSuccess = false;
 		isOK = false;
 	}

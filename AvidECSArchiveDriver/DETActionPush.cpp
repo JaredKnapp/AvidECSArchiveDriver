@@ -46,7 +46,8 @@ bool DETActionPush::TransferFile(unsigned long index)
 			CECSConnection::S3_ERROR Error = S3Write(m_ECSConnection, sDestFullPath, hFile, m_Data.m_lBlockSize, true, 20, ProgressCallBack, &Context);
 			if (Error.IfError())
 			{
-				LOG_ERROR << L"S3Write - Error: " << (LPCTSTR)Error.Format();
+				LOG_ERROR << L"Failed to write to Archive: " << (LPCTSTR)Error.Format();
+				SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 			}
 			else {
 				SetStatus(Av::DETEx::keNoError, liFileSize.QuadPart);
@@ -55,12 +56,16 @@ bool DETActionPush::TransferFile(unsigned long index)
 
 		}
 		catch (...) {
-			LOG_ERROR << "Caught Exception";
+			LOG_ERROR << "Caught Unknown Exception";
+			SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 		}
 	}
 	else
 	{
-		LOG_ERROR << L"Error Opening file to Push to ECS: (" << fileElement.FileName << L")";
+		LOG_ERROR << L"Error Opening file: (" << fileElement.FileName << L")";
+		DWORD createError = GetLastError();
+		FormatW32ErrorMessage(createError, m_sLastError);
+		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 	}
 
 	fileElement.transferSuccess = isOK;
