@@ -81,6 +81,9 @@ unsigned int DETAction::TransferFiles(void * pDETAction)
 					ExitThread((DWORD)FM_EXITTHREAD);
 					break;
 				}
+				pAction->m_CriticalSection.Enter();
+				pAction->m_Status.NumFilesXfer += 1;
+				pAction->m_CriticalSection.Leave();
 			}
 		}
 		catch (...)
@@ -140,7 +143,11 @@ Av::DETEx::eError DETAction::Action(const char * lpXML)
 				m_ECSConnection.SetHost(L"ECS S3 API");
 				m_ECSConnection.SetUserAgent(L"AvidEcsDriver/1.0");
 
+				//Set Global Variable
+				m_CriticalSection.Enter();
 				m_iBytesToXfer = CalculateTransferSize();
+				SetStatus(Av::DETEx::keNoError, 0, Av::DETEx::ketInfo);
+				m_CriticalSection.Leave();
 
 				//Okay to perform send and create the thread
 				if (m_hndActionThread == NULL)

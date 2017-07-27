@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DET version="2.0">
+	<DETVendorParams version="2.0">
+		<Vendor>Dell EMC</Vendor>
+		<DLLVersion>1.0</DLLVersion>
+		<MaxSessions>100</MaxSessions>
+		<BlockMoveSize>1048576</BlockMoveSize>
+		<PrivateData>
+			<Url>10.246.27.201</Url>
+			<Port>9020</Port>
+			<User>avid</User>
+			<Secret>/oTmupB17aO8MyXGeSEoiNpAPwgzI7+OzrD+6Pbd</Secret>
+			<Bucket>avid-bucket</Bucket>
+		</PrivateData>
+	</DETVendorParams>
+	<Metadata>
+		<Name>NBC_DV25_16bit</Name>
+	</Metadata>
+	<SessionID>70610a:1070ed73cc7:-7ff2</SessionID>
+	<Filelist>
+		<File>
+			<ID>060a2b340101010101010f0013-000000-00320111a4360016-060e2b347f7f-2000</ID>
+			<Filename>\\localhost\c$\Users\knappj1\Downloads\DELL EMC P3 Deep Dive.pptx</Filename>
+			<Segments>
+				<Segment>
+					<StartOffset>50000</StartOffset> 
+					<EndOffset>75000</EndOffset> 
+					<PartialFilename>\\localhost\c$\Users\knappj1\Downloads\DELL EMC P3 Deep Dive.pptx_segment1
+					</PartialFilename> 
+				</Segment>
+			</Segments>
+		</File>
+		<File>
+			<ID>060a2b340101010101010f0013-000000-00320111a4360016-060e2b347f7f-2001</ID>
+			<Filename>\\localhost\c$\Users\knappj1\Downloads\DELL EMC P3 Deep Dive.pptx</Filename>
+			<Segments>
+				<Segment>
+					<StartOffset>50000</StartOffset> 
+					<EndOffset>75000</EndOffset> 
+					<PartialFilename>\\localhost\c$\Users\knappj1\Downloads\DELL EMC P3 Deep Dive.pptx_segment2
+					</PartialFilename> 
+				</Segment>
+			</Segments>
+		</File>
+	</Filelist>
+</DET>

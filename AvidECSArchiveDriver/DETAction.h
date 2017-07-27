@@ -36,11 +36,12 @@ protected:
 
 	CString m_sLastError;
 
+	static CriticalSection m_CriticalSection;
+
 private:
 	Av::Int64 DETAction::CalculateTransferSize();
 	Av::DETEx::eError DETAction::RollbackState(bool& stateSet, CString msg);
 
-	static CriticalSection m_CriticalSection;
 
 	//thread routine called by Send to perform file move
 	static unsigned int WINAPI TransferFiles(void *pDETAction);

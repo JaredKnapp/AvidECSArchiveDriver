@@ -15,7 +15,6 @@ static void ProgressCallBack(int iProgress, void *pContext)
 	PROGRESS_CONTEXT *pProg = (PROGRESS_CONTEXT *)pContext;
 	pProg->ullOffset += iProgress;
 	LOG_DEBUG << pProg->sTitle << L" ProgressCallback, " << pProg->ullOffset;
-//	SetStatus(Av::DETEx::keNoError, iProgress);
 }
 
 bool DETActionPush::TransferFile(unsigned long index)
@@ -29,6 +28,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 	//Push to ECS
 	CHandle hFile(CreateFile(fileElement.FileName, FILE_GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr));
 	LARGE_INTEGER liFileSize;
+	Av::Int64 x;
 	if (GetFileSizeEx(hFile, &liFileSize))
 	{
 		PROGRESS_CONTEXT Context;
@@ -49,6 +49,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 				LOG_ERROR << L"S3Write - Error: " << (LPCTSTR)Error.Format();
 			}
 			else {
+				SetStatus(Av::DETEx::keNoError, liFileSize.QuadPart);
 				isOK = true;
 			}
 

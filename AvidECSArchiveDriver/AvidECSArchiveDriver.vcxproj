@@ -303,6 +303,15 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
   <ItemGroup>
     <Xml Include="AvidECSArchiveDriver.xml">
     </Xml>
+    <Xml Include="pull1.xml" />
+    <Xml Include="pull1S.xml" />
+    <Xml Include="pull2.xml" />
+    <Xml Include="pull2S.xml" />
+    <Xml Include="pull3S.xml" />
+    <Xml Include="push1.xml" />
+    <Xml Include="push2.xml" />
+    <Xml Include="remove1.xml" />
+    <Xml Include="remove2.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

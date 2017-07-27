@@ -13,6 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="XML Test Files">
+      <UniqueIdentifier>{003836cc-2b78-4e4c-a262-0751269be159}</UniqueIdentifier>
+      <Extensions>xml</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AvidECSArchiveDriver.cpp">
@@ -121,6 +125,33 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AvidECSArchiveDriver.xml" />
+    <Xml Include="pull1.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="pull1S.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="pull2.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="pull2S.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="pull3S.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="push1.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="push2.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="remove1.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
+    <Xml Include="remove2.xml">
+      <Filter>XML Test Files</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="AvidECSArchiveDriver.def">
