@@ -125,6 +125,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 				if (s3Error.IfError())
 				{
 					LOG_ERROR << L"Error from S3Read (" << s3Error.Format() << L")";
+					SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 					fileElement.transferSuccess = false;
 					isOK = false;
 				}
@@ -138,6 +139,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 			{
 				//ERROR
 				LOG_ERROR << L"Invalid File Handle (" << sDestFullPath << L")";
+				SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 				fileElement.transferSuccess = false;
 				isOK = false;
 			}
@@ -146,6 +148,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 	else
 	{
 		LOG_ERROR << L"Transferring WG4 is not supported!! tapename=" << fileElement.tapename << L",archiveid=" << fileElement.archiveID;
+		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 		fileElement.transferSuccess = false;
 		isOK = false;
 	}
