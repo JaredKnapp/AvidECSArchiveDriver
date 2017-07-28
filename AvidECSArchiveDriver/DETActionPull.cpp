@@ -97,7 +97,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 						}
 						else
 						{
-							bool bWriteResult = WriteFile(hndDestFile, RetData.GetData(), iReadSize, &iBytesWritten, NULL);
+							BOOL bWriteResult = WriteFile(hndDestFile, RetData.GetData(), iReadSize, &iBytesWritten, NULL);
 							if ((bWriteResult == 0) || (iBytesWritten != iReadSize))
 							{
 								createError = GetLastError();
