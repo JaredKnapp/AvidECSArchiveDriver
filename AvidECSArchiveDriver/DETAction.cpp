@@ -56,8 +56,6 @@ DETAction::~DETAction() {
 //Called from ActionThread, launched in Action() method
 unsigned int DETAction::TransferFiles(void * pDETAction)
 {
-	LOG_DEBUG << "entering";
-
 	CString sError;
 	DWORD dwErrorCode = 0;
 	DETAction *pAction = static_cast<DETAction*>(pDETAction);

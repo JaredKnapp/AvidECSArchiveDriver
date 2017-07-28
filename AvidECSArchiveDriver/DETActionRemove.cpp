@@ -8,8 +8,6 @@
 Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 {
 	Av::DETEx::eError Error = Av::DETEx::keNoError;
-	LOG_DEBUG << "Entering";
-
 	try
 	{
 		XMLDomParser parser(m_Data, lpXML);
@@ -18,8 +16,6 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 		{
 			if (m_pState->SetState(vrskrsRun))
 			{
-				LOG_DEBUG << "Action 1";
-
 				//Establish ECS Connection
 				bool isSSL = (m_Data.m_wS3Port == 9021 || m_Data.m_wS3Port == 443);
 
@@ -47,6 +43,10 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 					if (s3Error.IfError())
 					{
 						LOG_ERROR << "Failed to delete file - " << s3Error .Format();
+
+						m_sLastError = s3Error.Format();
+						SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
+
 						Error = Av::DETEx::keInternalError;
 						fileElement.transferSuccess = FALSE;
 					}
@@ -75,6 +75,7 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 	catch (...)
 	{
 		LOG_ERROR << sUnknownException;
+		m_sLastError = sUnknownException;
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketFatal);
 	}
 	return Error;

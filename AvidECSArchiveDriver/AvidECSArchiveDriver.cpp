@@ -66,7 +66,7 @@ CAvidECSArchiveDriverApp::CAvidECSArchiveDriverApp()
 	// Place all significant initialization in InitInstance
 
 	//Logging: https://github.com/SergiusTheBest/plog
-	plog::init(plog::verbose, LOGFILENAME, 1000000, 5);
+	plog::init(plog::info, LOGFILENAME, 1000000, 5);
 
 	//Open ECS Connector
 	CECSConnection::Init();

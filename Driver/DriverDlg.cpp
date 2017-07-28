@@ -506,9 +506,8 @@ void CDriverDlg::OnBnClickedClearstatus()
 
 void CDriverDlg::OnBnClickedPause()
 {
-	int ret = -99;
 	if (!IsInitialized()) {AfxMessageBox("Must init first"); return;}
-	ret = m_DETBaseExPtr->PauseEx();
+	int ret = m_DETBaseExPtr->PauseEx();
 
 	m_Edit1.SetWindowText(retrieveErrorString(ret));
 	UpdateData();

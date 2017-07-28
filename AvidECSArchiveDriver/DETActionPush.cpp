@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Messages.h"
 #include "FileSupport.h"
 #include "DETActionPush.h"
 
@@ -47,6 +48,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 			if (Error.IfError())
 			{
 				LOG_ERROR << L"Failed to write to Archive: " << (LPCTSTR)Error.Format();
+				m_sLastError = Error.Format();
 				SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 			}
 			else {
@@ -57,6 +59,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 		}
 		catch (...) {
 			LOG_ERROR << "Caught Unknown Exception";
+			m_sLastError = sUnknownException;
 			SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 		}
 	}
