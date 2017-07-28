@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FileSupport.h"
+#include "Messages.h"
 #include "DETActionPull.h"
 
 struct PROGRESS_CONTEXT
@@ -20,6 +21,7 @@ static void ProgressCallBack(int iProgress, void *pContext)
 
 bool DETActionPull::TransferFile(unsigned long index)
 {
+	DWORD createError;
 	bool isOK = false;
 	DETActionData::FileStruct& fileElement = m_Data.m_FileStructList[index];
 
@@ -49,66 +51,77 @@ bool DETActionPull::TransferFile(unsigned long index)
 				HANDLE hndDestFile = CreateFile(sDestFullPath, GENERIC_WRITE, 0, nullptr, TRUNCATE_EXISTING, (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH), nullptr);
 				if (hndDestFile == INVALID_HANDLE_VALUE)
 				{
-					DWORD createError = GetLastError();
+					createError = GetLastError();
 					if (createError == 0 || createError == ERROR_FILE_NOT_FOUND)
 					{
 						hndDestFile = CreateFile(sDestFullPath, GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH), nullptr);
 					}
+				}
 
-					if (hndDestFile == INVALID_HANDLE_VALUE)
+				if (hndDestFile == INVALID_HANDLE_VALUE)
+				{
+					LOG_ERROR << "Failed to Open for Write on File " << sDestFullPath;
+
+					createError = GetLastError();
+					FormatW32ErrorMessage(createError, m_sLastError);
+					SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
+
+					fileElement.transferSuccess = false;
+					isOK = false;
+				}
+				else
+				{
+					Av::Int64 iFileSize = fileSegment.EndOffset - fileSegment.StartOffset;
+					Av::Int64 iBytesRemaining = iFileSize;
+					Av::Int64 iCurrentOffset = fileSegment.StartOffset;
+
+					CBuffer RetData;
+					RetData.SetBufSize(m_Data.m_lBlockSize);
+
+					do
 					{
-						LOG_ERROR << "Failed to Open for Write on File " << sDestFullPath;
-						createError = GetLastError();
-						FormatW32ErrorMessage(createError, m_sLastError);
-						SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
-						CloseHandle(hndDestFile);
-					}
-					else
-					{
-						Av::Int64 iFileSize = fileSegment.EndOffset - fileSegment.StartOffset;
-						Av::Int64 iBytesRemaining = iFileSize;
-						Av::Int64 iCurrentOffset = fileSegment.StartOffset;
+						DWORD iBytesWritten = 0;
+						Av::Int64 iReadSize = min(iBytesRemaining, m_Data.m_lBlockSize);
 
-						CBuffer RetData;
-						RetData.SetBufSize(m_Data.m_lBlockSize);
-
-						do
+						CECSConnection::S3_ERROR s3Error = m_ECSConnection.Read(sSourceFullPath, iReadSize, iCurrentOffset, RetData);
+						if (s3Error.IfError())
 						{
-							DWORD iBytesWritten = 0;
-							Av::Int64 iReadSize = min(iBytesRemaining, m_Data.m_lBlockSize);
+							LOG_ERROR << L"Error from S3Read (" << s3Error.Format() << L")";
+							m_sLastError = s3Error.Format();
+							SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
+							CloseHandle(hndDestFile);
+							hndDestFile = INVALID_HANDLE_VALUE;
 
-							CECSConnection::S3_ERROR s3Error = m_ECSConnection.Read(sSourceFullPath, iReadSize, iCurrentOffset, RetData);
-							if (s3Error.IfError())
+							fileElement.transferSuccess = false;
+							isOK = false;
+						}
+						else
+						{
+							bool bWriteResult = WriteFile(hndDestFile, RetData.GetData(), iReadSize, &iBytesWritten, NULL);
+							if ((bWriteResult == 0) || (iBytesWritten != iReadSize))
 							{
-								LOG_ERROR << L"Error from S3Read (" << s3Error.Format() << L")";
+								createError = GetLastError();
+								FormatW32ErrorMessage(createError, m_sLastError);
+								SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
+
+								CloseHandle(hndDestFile);
+								hndDestFile = INVALID_HANDLE_VALUE;
+
+								LOG_ERROR << "Segment Restore FAILED due to " << m_sLastError;
 								fileElement.transferSuccess = false;
 								isOK = false;
 							}
 							else
 							{
-								bool bWriteResult = WriteFile(hndDestFile, RetData.GetData(), iReadSize, &iBytesWritten, NULL);
-								if ((bWriteResult == 0) || (iBytesWritten != iReadSize))
-								{
-									createError = GetLastError();
-									FormatW32ErrorMessage(createError, m_sLastError);
-									SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
-
-									CloseHandle(hndDestFile);
-									hndDestFile = INVALID_HANDLE_VALUE;
-
-									LOG_ERROR << "Segment Restore FAILED due to " << m_sLastError;
-									fileElement.transferSuccess = false;
-									isOK = false;
-								}
-								else
-								{
-									iCurrentOffset += iBytesWritten;
-									iBytesRemaining -= iBytesWritten;
-									SetStatus(Av::DETEx::keNoError, iBytesWritten);
-								}
+								iCurrentOffset += iBytesWritten;
+								iBytesRemaining -= iBytesWritten;
+								SetStatus(Av::DETEx::keNoError, iBytesWritten);
 							}
-						} while (iBytesRemaining > 0 && isOK);
-					}
+						}
+					} while (iBytesRemaining > 0 && isOK);
+
+					CloseHandle(hndDestFile);
+					hndDestFile = INVALID_HANDLE_VALUE;
 				}
 			}
 		}
@@ -125,6 +138,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 				if (s3Error.IfError())
 				{
 					LOG_ERROR << L"Error from S3Read (" << s3Error.Format() << L")";
+					m_sLastError = s3Error.Format();
 					SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 					fileElement.transferSuccess = false;
 					isOK = false;
@@ -139,6 +153,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 			{
 				//ERROR
 				LOG_ERROR << L"Invalid File Handle (" << sDestFullPath << L")";
+				m_sLastError = sInvalidFileHandle;
 				SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 				fileElement.transferSuccess = false;
 				isOK = false;
@@ -148,6 +163,7 @@ bool DETActionPull::TransferFile(unsigned long index)
 	else
 	{
 		LOG_ERROR << L"Transferring WG4 is not supported!! tapename=" << fileElement.tapename << L",archiveid=" << fileElement.archiveID;
+		m_sLastError = sUnsupportedFileOperation;
 		SetStatus(Av::DETEx::keInternalError, 0, Av::DETEx::ketWarning);
 		fileElement.transferSuccess = false;
 		isOK = false;
