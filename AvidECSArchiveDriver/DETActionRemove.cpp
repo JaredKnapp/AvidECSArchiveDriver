@@ -19,9 +19,7 @@ Av::DETEx::eError DETActionRemove::Action(const char* lpXML)
 				//Establish ECS Connection
 				bool isSSL = (m_Data.m_wS3Port == 9021 || m_Data.m_wS3Port == 443);
 
-				deque<CString> IPList;
-				IPList.push_back(m_Data.m_sS3Url);
-				m_ECSConnection.SetIPList(IPList);
+				m_ECSConnection.SetIPList(m_Data.m_S3IPList);
 				m_ECSConnection.SetS3KeyID(m_Data.m_sS3User);
 				m_ECSConnection.SetSecret(m_Data.m_sS3Secret);
 				m_ECSConnection.SetSSL(isSSL);

@@ -90,6 +90,7 @@ const int FM_EXITTHREAD = (DET_CODE | 0x0002);
 #define DET_XML_TAG_S3BUCKET "Bucket"
 #define DET_XML_TAG_S3PORT "Port"
 #define DET_XML_TAG_S3SECRET "Secret"
+#define DET_XML_TAG_S3URLS "Urls"
 #define DET_XML_TAG_S3URL "Url"
 #define DET_XML_TAG_S3USER "User"
 #define DET_XML_TAG_SEGMENT "Segment"

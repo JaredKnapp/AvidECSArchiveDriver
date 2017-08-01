@@ -36,7 +36,8 @@ typedef struct DETActionData
 
 
 	//XML Vendor Settings
-	CString m_sS3Url;
+	//CString m_sS3Url;
+	std::deque<CString> m_S3IPList;
 	WORD m_wS3Port;
 	CString m_sS3User;
 	CString m_sS3Secret;

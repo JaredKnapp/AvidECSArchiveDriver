@@ -29,7 +29,7 @@ bool DETActionPush::TransferFile(unsigned long index)
 	//Push to ECS
 	CHandle hFile(CreateFile(fileElement.FileName, FILE_GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr));
 	LARGE_INTEGER liFileSize;
-	Av::Int64 x;
+
 	if (GetFileSizeEx(hFile, &liFileSize))
 	{
 		PROGRESS_CONTEXT Context;
