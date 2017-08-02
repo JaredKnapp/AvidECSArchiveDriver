@@ -76,21 +76,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\Output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\Output\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>..\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\Output\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\output\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\Output\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,9 +124,9 @@
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
-copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)"
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.dll" "$(OutDir)"
+copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.dll"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -161,9 +161,9 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
-copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)"
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.dll" "$(OutDir)"
+copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.dll"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -202,9 +202,9 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
-copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)"
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.dll" "$(OutDir)"
+copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.dll"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -243,9 +243,9 @@ copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.*"  "$(OutDir)
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
-copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
-copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)"
+copy "$(SolutionDir)$(Configuration)\$(Platform)\*.dll" "$(OutDir)"
+copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.dll"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
