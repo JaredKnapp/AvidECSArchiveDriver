@@ -99,7 +99,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ECSUtil\;$(SolutionDir)include\AvSupport\xercesc-3.1.1\include</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ECSUtil\;$(SolutionDir)include\AvSupport\xercesc-3.1.1\include</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -175,7 +175,7 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ECSUtil\;$(SolutionDir)include\AvSupport\xercesc-3.1.1\include</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -204,7 +204,7 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
 copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
-copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
+copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -216,7 +216,7 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>XML_LIBRARY;_CRT_SECURE_NO_WARNINGS;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\include;$(SolutionDir)ECSUtil\;$(SolutionDir)xerces-c-3.1.4\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)ECSUtil\;$(SolutionDir)include\AvSupport\xercesc-3.1.1\include</AdditionalIncludeDirectories>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
@@ -245,7 +245,7 @@ copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerce
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)AvidECSArchiveDriver.xml" "$(OutDir)AvidECSArchiveDriver.xml"
 copy "$(SolutionDir)$(Configuration)\$(Platform)\*.*" "$(OutDir)"
-copy "$(SolutionDir)xerces-c-3.1.4\Build\$(Platform)\VC14\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
+copy "$(SolutionDir)lib\$(Platform)_vc11\$(Configuration)\xerces*.*"  "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
