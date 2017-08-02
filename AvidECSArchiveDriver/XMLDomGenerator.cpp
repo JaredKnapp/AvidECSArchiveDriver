@@ -43,7 +43,10 @@ void XMLDomGenerator::writeXMLToString(DOMImplementation *impl, DOMNode* node, C
 
 			// (this may not be correct) XMLString::release(&pXmlString);
 			delete pFormatTarget;
-			delete tempStr;
+
+			//TODO WJK - why can't delete this???
+//			delete tempStr;
+			tempStr = NULL;
 		}
 
 		pSerializer->release();

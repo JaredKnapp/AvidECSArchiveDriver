@@ -66,11 +66,11 @@ CAvidECSArchiveDriverApp::CAvidECSArchiveDriverApp()
 	// Place all significant initialization in InitInstance
 
 	//Logging: https://github.com/SergiusTheBest/plog
-	plog::init(plog::info, LOGFILENAME, 1000000, 5);
+	//plog::init(plog::info, LOGFILENAME, 1000000, 5);
+	plog::init(plog::debug, LOGFILENAME, 1000000, 5);
 
 	//Open ECS Connector
 	CECSConnection::Init();
-	LOG_DEBUG << "Current Filepath = " << GetThisDllPath();
 	LOG_DEBUG << "App Initialized";
 }
 
